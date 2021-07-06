@@ -1,5 +1,5 @@
-function test() {
+let test = () => {
     alert('this is the test');
 }
 
-module.exports test;
+exports.test = test;
