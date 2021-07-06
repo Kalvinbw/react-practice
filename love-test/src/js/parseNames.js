@@ -1,4 +1,4 @@
-let saveFunc = require('./output');
+
 //function to parse the names
 function parseNames(data) {
     var sLovePhrase; 
@@ -52,40 +52,40 @@ function parseNames(data) {
     var iPower = 0;
     var iFactor = 1;
                 
-    // if (document.getElementById('communicate').checked) 
-    // iFactor = iFactor + .25
-    // if (document.getElementById('selfish').checked) 
-    // iFactor = iFactor + .25
-    // if (document.getElementById('serve').checked) 
-    // iFactor = iFactor + .25
-    // if (document.getElementById('friends').checked) 
-    // iFactor = iFactor + .25
-    // if (document.getElementById('god').checked) 
-    // iFactor = iFactor + .5
+    if (data.communicate === true) 
+    iFactor = iFactor + .25
+    if (data.selfish === true) 
+    iFactor = iFactor + .25
+    if (data.serve === true) 
+    iFactor = iFactor + .25
+    if (data.friends === true) 
+    iFactor = iFactor + .25
+    if (data.god === true) 
+    iFactor = iFactor + .5
     //calculation
     iPower = Math.ceil(((TotalCount / sLovePhrase.length) * 22) * iFactor);
 
-    //drawBar(iPower);
     //output based on      
-    if (iPower >= 100)
+    if (iPower >= 100) {
     //document.getElementById("output").innerHTML= "Perfect Marriage";
-    saveFunc.push("Perfect Marriage");
-    else if (iPower >= 85)
-    //document.getElementById("output").innerHTML = "Get Married";
-    saveFunc.push("Get Married");
-    else if (iPower >= 70)
-    //document.getElementById("output").innerHTML = "It might work";
-    saveFunc.push("It might work");
-    else
-    //document.getElementById("output").innerHTML = "Keep looking!";
-    saveFunc.push("Keep looking!");
+        return ["Perfect Marriage", iPower];
+    }
+    else if (iPower >= 85) {
+        //document.getElementById("output").innerHTML = "Get Married";
+        return ["Get Married", iPower];
+    }
+
+    else if (iPower >= 70) {
+        //document.getElementById("output").innerHTML = "It might work";
+        return ["It might work", iPower];
+    }
+    else {
+        //document.getElementById("output").innerHTML = "Keep looking!";
+        return ["Keep looking!", iPower];
+    }
     }
 
 }
 
-// function drawBar(num)  {
-//     var load = 50//new ldBar("#heart");
-//     load.set(num); 
-// }
 
 exports.parseNames = parseNames;
