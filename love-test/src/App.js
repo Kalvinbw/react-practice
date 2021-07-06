@@ -2,7 +2,7 @@
 import './App.css';
 import React from 'react';
 const myjs = require('./js/parseNames');
-let loadRef = require('./js/loading-bar');
+
 
 
 function Header() {
