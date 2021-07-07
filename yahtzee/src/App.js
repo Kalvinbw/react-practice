@@ -2,6 +2,7 @@ import logo from './images/YahtzeePic.png';
 import images from './images';
 import './App.css';
 import React from 'react';
+let rollDie = require('./js/rollDice');
 
 function Header(props) {
   return (
@@ -16,7 +17,6 @@ function Header(props) {
 class InputForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -26,7 +26,7 @@ class InputForm extends React.Component {
   }
 
   handleSubmit(e) {
-    this.props.onSubmit(e);
+    this.props.onClick(e);
   }
 
   render() {
@@ -41,7 +41,7 @@ class InputForm extends React.Component {
             placeholder="Enter a number between 1-6"
             ></input>
         </label>
-        <input type="submit" value="Click to Roll" onSubmit={this.handleSubmit}></input>
+        <input type="button" value="Click to Roll" onClick={this.handleSubmit} />
       </div>
     );
   }
@@ -52,17 +52,24 @@ class Dice extends React.Component {
   constructor(props) {
     super(props);
     this.state = {}
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onChange(e);
   }
 
   render() {
     let final = [];
+    let mynum = this.props.num !== 'undefined' ? this.props.num : 0;
     for (let i = 0; i < 6; i++) {
-      final.push(<img src={images[this.props.num].src} alt="die"></img> )
+      final.push(<img key={images[i].id} src={images[mynum].src} alt="die"></img> )
     }
     return (
       <div className="dieImg">
         {final}
       </div>
+
     );
   }
 }
@@ -71,12 +78,17 @@ class DieArea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {array: images}
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onChange(e);
   }
 
   render() {
     return (
       <div className="inputArea">
-        <Dice num={this.props.num}/>
+        <Dice num={this.props.num} onChange={this.props.onChange}/>
       </div>
     );
   }
@@ -100,18 +112,22 @@ class App extends React.Component {
     if (num < 1 || num > 6 || typeof(num) === 'undefined') {
       this.setState({flag: true, chosenDie: 1})
     } else {
+      if (isNaN(num)) {
+        num = 1
+      }
       this.setState({[nam]: num, flag: false})
     }
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(images);
+    let data = rollDie(this.state.chosenDie);
 
+    console.log(data);
   }
 
   render() {
-    let arrNum = typeof(this.state.chosenDie) === 'undefined' ? 1 : this.state.chosenDie - 1;
+    let arrNum = this.state.chosenDie - 1;
     let alert;
     if (this.state.flag === true) {
       alert = <div><p>Please enter a valid number between 1 and 6</p></div>;
@@ -122,9 +138,9 @@ class App extends React.Component {
     return (
       <div className="App">
         <Header />
-        <InputForm value={this.state.chosenDie} onChange={this.handleChange} onSubmit={this.handleSubmit} />
+        <InputForm value={this.state.chosenDie} onChange={this.handleChange} onClick={this.handleSubmit} />
         {alert}
-        <DieArea num={arrNum}/>
+        <DieArea num={arrNum} onChange={this.handleChange}/>
       </div>
     );
   }
