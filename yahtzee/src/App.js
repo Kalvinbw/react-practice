@@ -2,7 +2,7 @@ import logo from './images/YahtzeePic.png';
 import images from './images';
 import './App.css';
 import React from 'react';
-let rollDie = require('./js/rollDice');
+//import rollDie from './js/rollDice';
 
 function Header(props) {
   return (
@@ -94,13 +94,54 @@ class DieArea extends React.Component {
   }
 }
 
+class Out extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onChange(e);
+  }
+
+  render() {
+    let final = [];
+    for (let i = 0; i < 6; i++) {
+      let phrase = "hi " + this.props.rolls[i];
+      final.push(<div className="dieOutput"><p key={i}>{phrase}</p></div> )
+    }
+    return (
+      <div className="dieOutput">
+        {final}
+      </div>
+
+    );
+  }
+}
+
+class OutputArea extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {array: images}
+  }
+
+  render() {
+    return (
+      <div className="inputArea">
+        <Out rolls={this.props.results}/>
+      </div>
+    );
+  }
+}
+
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
       chosenDie: 1,
       flag: false,
-      imageArray: images
+      imageArray: images,
+      resultArray: [0, 0, 0, 0, 0, 0]
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -121,9 +162,22 @@ class App extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let data = rollDie(this.state.chosenDie);
-
-    console.log(data);
+    let num = this.state.chosenDie;
+    let array = [];
+    let rolled
+    for (let i = 0; i < 6; i++) {
+      var j = 0
+      do {
+        rolled = (Math.floor(Math.random() * 6) + 1);
+        if (rolled === num) {
+          ++j;
+          array.push(j);
+        } else {
+          j = j + 1;
+        }
+      } while (rolled !== num);
+    }
+    this.setState({resultArray: array})
   }
 
   render() {
@@ -141,6 +195,7 @@ class App extends React.Component {
         <InputForm value={this.state.chosenDie} onChange={this.handleChange} onClick={this.handleSubmit} />
         {alert}
         <DieArea num={arrNum} onChange={this.handleChange}/>
+        <OutputArea results={this.state.resultArray}/>
       </div>
     );
   }
