@@ -39,10 +39,11 @@ class InputForm extends React.Component {
             onChange={this.handleChange}
             value={this.props.chosenDie}
             placeholder="Enter a number between 1-6"
+            size="22"
             ></input>
         </label>
         <input type="button" value="Click to Roll" onClick={this.handleSubmit} />
-      </div>
+      </div>    
     );
   }
 
@@ -62,8 +63,8 @@ class Dice extends React.Component {
   render() {
     let final = [];
     let mynum = this.props.num !== 'undefined' ? this.props.num : 0;
-    for (let i = 0; i < 6; i++) {
-      final.push(<img key={images[i].id} src={images[mynum].src} alt="die"></img> )
+    for (let i = 0; i < 5; i++) {
+      final.push(<div className="dieImg"><img key={images[i].id} src={images[mynum].src} alt="die"></img></div> )
     }
     return (
       <div className="dieImg">
@@ -106,12 +107,13 @@ class Out extends React.Component {
 
   render() {
     let final = [];
-    for (let i = 0; i < 6; i++) {
-      let phrase = "hi " + this.props.rolls[i];
+    for (let i = 0; i < 5; i++) {
+      let n = i + 1;
+      let phrase = "Dice " + n + " rolls = " + this.props.rolls[i];
       final.push(<div className="dieOutput"><p key={i}>{phrase}</p></div> )
     }
     return (
-      <div className="dieOutput">
+      <div className="inputArea">
         {final}
       </div>
 
@@ -126,10 +128,21 @@ class OutputArea extends React.Component {
   }
 
   render() {
+    if (!this.props.show) {
+      return (
+        <div></div>
+      );
+    }
+
     return (
-      <div className="inputArea">
-        <Out rolls={this.props.results}/>
-      </div>
+      <span>
+        <div className="inputArea">
+          <Out rolls={this.props.results}/>
+        </div>
+        <div>
+          <p>Total Rolls: {this.props.total}</p>
+        </div>
+      </span>
     );
   }
 }
@@ -141,6 +154,8 @@ class App extends React.Component {
       chosenDie: 1,
       flag: false,
       imageArray: images,
+      clicked: false,
+      totalRolls: 0,
       resultArray: [0, 0, 0, 0, 0, 0]
     }
     this.handleChange = this.handleChange.bind(this);
@@ -148,15 +163,15 @@ class App extends React.Component {
   }
 
   handleChange(e) {
-    let nam = e.target.name
-    let num = parseInt(e.target.value)
-    if (num < 1 || num > 6 || typeof(num) === 'undefined') {
-      this.setState({flag: true, chosenDie: 1})
+    let nam = e.target.name;
+    let num = parseInt(e.target.value);
+    if (num < 1 || num > 6 || typeof(num) === 'undefined' || isNaN(num)) {
+      this.setState({flag: true, chosenDie: 1});
     } else {
       if (isNaN(num)) {
-        num = 1
+        num = 1;
       }
-      this.setState({[nam]: num, flag: false})
+      this.setState({[nam]: num, flag: false, clicked: false});
     }
   }
 
@@ -164,20 +179,24 @@ class App extends React.Component {
     e.preventDefault();
     let num = this.state.chosenDie;
     let array = [];
-    let rolled
+    let total = 0;
+    let rolled;
+    let j = 0;
     for (let i = 0; i < 6; i++) {
-      var j = 0
+      j = 0;
       do {
         rolled = (Math.floor(Math.random() * 6) + 1);
         if (rolled === num) {
+          ++total;
           ++j;
           array.push(j);
         } else {
-          j = j + 1;
+          ++j;
+          ++total;
         }
       } while (rolled !== num);
     }
-    this.setState({resultArray: array})
+    this.setState({resultArray: array, clicked: true, totalRolls: total});
   }
 
   render() {
@@ -189,13 +208,14 @@ class App extends React.Component {
     } else {
       alert = <div></div>;
     }
+
     return (
       <div className="App">
         <Header />
         <InputForm value={this.state.chosenDie} onChange={this.handleChange} onClick={this.handleSubmit} />
         {alert}
-        <DieArea num={arrNum} onChange={this.handleChange}/>
-        <OutputArea results={this.state.resultArray}/>
+        <DieArea num={arrNum} onChange={this.handleChange} />
+        <OutputArea results={this.state.resultArray} show={this.state.clicked} total={this.state.totalRolls}/>
       </div>
     );
   }
