@@ -6,8 +6,23 @@ import React from 'react';
 class App extends React.Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {
+      cards: ''
+    }
 
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange() {}
+
+  handleSubmit() {}
+
+  getDeck() {
+    fetch("/getCards")
+      .then((res) => res.json())
+      .then((data) => this.setState({cards: data.d}));
+    console.log(this.state.cards);
   }
 
   render () {
