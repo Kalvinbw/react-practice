@@ -9,7 +9,9 @@ class Header extends React.Component {
 
     render() {
         return (
-            <div><p>Hello World!</p></div>
+            <div className='App-header'>
+                <p>Matatu!</p>
+            </div>
         );
     }
 }
