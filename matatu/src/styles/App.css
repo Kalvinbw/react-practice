@@ -25,7 +25,7 @@
 }
 
 .App-body {
-  background-color: pink;
+  background-color: grey;
   min-height: 90vh;
   display: flex;
   flex-direction: row;
