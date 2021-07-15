@@ -1,5 +1,6 @@
 import './styles/App.css';
 import Header from './components/header/header';
+import Card from './components/card/Card';
 import React from 'react';
 
 class App extends React.Component {
@@ -14,8 +15,9 @@ class App extends React.Component {
       <div>
         <Header />
         <div className='App-body'>
-        <div className='Card'><p>test</p></div>
-        <div className='Card'><p>test</p></div>
+        <Card suit='Heart' number={3}/>
+        <Card suit='Heart' number={3}/>
+        <Card suit='Heart' number={3}/>
         </div>
       </div>
       
