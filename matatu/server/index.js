@@ -112,19 +112,20 @@ function makeDeck() {
 }
 
 let d = makeDeck();
-
+d = d[1];
+console.log(d[40].suit);
 //post express 4.16 use
 app.use(express.urlencoded({extended: true}));
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 //get the page when they go to the root directory
 app.get('/', function(req,res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile(path.resolve(__dirname + '../client/build', 'index.html'));
 });
 
 app.get("/getCards", (req, res) => {
-    res.json({data: d});
+    res.send({data: d}    );
 });
 
 //listen on the port //the function part is a callback function
