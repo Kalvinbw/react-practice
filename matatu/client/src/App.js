@@ -19,20 +19,20 @@ class App extends React.Component {
   handleSubmit() {}
 
   componentDidMount() {
-    this.getDeck();
-    this.renderItems();
+    this.getDeck()
   }
 
   getDeck() {
     fetch("/getCards")
-      .then((res) => this.setState({cards: [res.data]}));
-    console.log(this.state.cards);
+      .then(res => res.json())
+      .then(jsondata => {
+        this.setState({cards: jsondata.data})
+      }); 
+    this.renderItems();
   }
 
   renderItems() {
-    return this.state.cards.map(card => (
-      <Card suit={card.suit} number={card.number} />
-    ));
+    console.log(this.state.cards);
   }
 
   render () {
@@ -40,7 +40,6 @@ class App extends React.Component {
       <div>
         <Header />
         <div className='App-body'>
-        {this.renderItems()}
         <Card suit='Heart' number={3}/>
         <Card suit='Heart' number={3}/>
         </div>

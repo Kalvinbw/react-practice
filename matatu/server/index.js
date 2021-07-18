@@ -61,17 +61,17 @@ function makeDeck() {
                     abil = ability[3];
                     break;
                 case 2:
-                    nam = toString(num);
+                    nam = num;
                     val = num;
                     abil = ability[0];
                     break;
                 case 8:
-                    nam = toString(num);
+                    nam = num;
                     val = values[1];
                     abil = ability[4];
                     break;
                 case 10:
-                    nam = toString(num);
+                    nam = num;
                     val = num;
                     abil = ability[1];
                     break;
@@ -91,7 +91,7 @@ function makeDeck() {
                     abil = null;
                     break;
                 default:
-                    nam = toString(num);
+                    nam = num;
                     val = num;
                     abil = null;
                     break;
@@ -125,7 +125,7 @@ app.get('/', function(req,res) {
 });
 
 app.get("/getCards", (req, res) => {
-    res.send({data: d}    );
+    res.json({data: d});
 });
 
 //listen on the port //the function part is a callback function
