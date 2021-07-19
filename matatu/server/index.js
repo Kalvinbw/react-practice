@@ -116,7 +116,6 @@ function makeDeck() {
 
 let d = makeDeck();
 d = d[1];
-console.log(d[40].suit);
 //post express 4.16 use
 app.use(express.urlencoded({extended: true}));
 
