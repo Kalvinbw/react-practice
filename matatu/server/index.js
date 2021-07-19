@@ -1,12 +1,14 @@
 //Server file
 const listenPort = 8080;
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
+const cors = require('cors');
 let express = require('express');
 let path = require('path');
 let app = express();
 
 class Card {
-    constructor(sui, nam, num, abil, v) {
+    constructor(ID, sui, nam, num, abil, v) {
+        this.id = ID;
         this.suit = sui;
         this.name = nam;
         this.number = num;
@@ -53,6 +55,7 @@ function makeDeck() {
         let abil;
         let nam;
         for(let j=1; j<14; j++) {
+            let ID = `${i} + ${j}`
             num = j;
             switch(num) {
                 case 1:
@@ -96,14 +99,14 @@ function makeDeck() {
                     abil = null;
                     break;
             } //end switch
-            let c = new Card(sui, nam, num, abil, val);
+            let c = new Card(ID, sui, nam, num, abil, val);
             cardAr.push(c);
         }
     }
 
     //create the joker cards
     for(let i = 0; i < 2; i++) {
-        let c = new Card('Joker', names[4], 0, ability[2], values[2]);
+        let c = new Card(i, 'Joker', names[4], 0, ability[2], values[2]);
         cardAr.push(c);
     }
 
@@ -119,16 +122,20 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 
+app.use(cors());
+
 //get the page when they go to the root directory
 app.get('/', function(req,res) {
     res.sendFile(path.resolve(__dirname + '../client/build', 'index.html'));
 });
 
-app.get("/getCards", (req, res) => {
-    res.json({data: d});
+app.get("/getCards", async (req, res) => {
+    res.status(200).json(d);
 });
 
 //listen on the port //the function part is a callback function
 app.listen(listenPort, function() {
     console.log("listener is active on Port " + listenPort);
 });
+
+module.exports = app;
