@@ -16,8 +16,6 @@ class App extends React.Component {
     fetch("/getCards")
       .then(res => res.json())
       .then(jsondata => {
-        console.log('inside fetch');
-        console.log(jsondata);
         this.setState({cards: jsondata})
       }); 
       this.renderItems();
