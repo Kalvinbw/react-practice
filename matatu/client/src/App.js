@@ -7,10 +7,13 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      cards: []
+      cards: [],
+      flip: false
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.shuffleArray = this.shuffleArray.bind(this);
+    this.loadCards = this.loadCards.bind(this);
+    this.flipAll = this.flipAll.bind(this);
   }
   
 
@@ -26,6 +29,14 @@ class App extends React.Component {
       });
   }
 
+  loadCards() {
+    let renderCards = this.state.cards.map((card) => (
+      <Card key={card.id} suit={card.suit} 
+      number={card.number} show={this.state.flip}/>
+    ))
+    return renderCards;
+  }
+
   shuffleArray() {
     //console.log(this.state.cards);
     let array = this.state.cards;
@@ -36,15 +47,20 @@ class App extends React.Component {
     this.setState({cards: array});
   }
 
+  flipAll() {
+    let toggle = !this.state.flip;
+    this.setState({flip: toggle});
+    this.loadCards();
+  }
+
   render () {
     return (
       <div>
         <Header />
         <button onClick={this.shuffleArray}>Shuffle</button>
+        <button onClick={this.flipAll}>Flip All</button>
         <div className='App-body'>
-        {this.state.cards.map((card) => (
-          <Card key={card.id} suit={card.suit} number={card.number}/>
-        ))}
+        {this.loadCards()}
         </div>
       </div>
       
