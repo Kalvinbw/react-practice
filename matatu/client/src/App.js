@@ -50,7 +50,6 @@ class App extends React.Component {
   flipAll() {
     let toggle = !this.state.flip;
     this.setState({flip: toggle});
-    this.loadCards();
   }
 
   render () {
