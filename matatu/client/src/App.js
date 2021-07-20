@@ -32,7 +32,7 @@ class App extends React.Component {
   loadCards() {
     let renderCards = this.state.cards.map((card) => (
       <Card key={card.id} suit={card.suit} 
-      number={card.number} show={this.state.flip}/>
+      number={card.number} show={this.state.flip} className='Card'/>
     ))
     return renderCards;
   }
@@ -59,7 +59,9 @@ class App extends React.Component {
         <button onClick={this.shuffleArray}>Shuffle</button>
         <button onClick={this.flipAll}>Flip All</button>
         <div className='App-body'>
-        {this.loadCards()}
+          
+            {this.loadCards()}
+          
         </div>
       </div>
       
