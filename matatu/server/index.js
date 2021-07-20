@@ -1,6 +1,5 @@
 //Server file
 const listenPort = 8080;
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const cors = require('cors');
 let express = require('express');
 let path = require('path');

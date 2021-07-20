@@ -28,6 +28,7 @@
   background-color: grey;
   min-height: 90vh;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   align-items: normal;
   justify-content: center;
@@ -49,7 +50,7 @@
 }
 
 .Card {
-  background-color: white;
+  background-color: black;
   height: 30vmin;
   width: 20vh;
   display: flex;
@@ -62,4 +63,5 @@
 
 h6 {
   margin: 0;
+  color: white;
 }

@@ -4,40 +4,47 @@ import Card from './components/card/Card';
 import React from 'react';
 
 class App extends React.Component {
-  state = {
-    cards: []
+  constructor() {
+    super();
+    this.state = {
+      cards: []
+    }
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.shuffleArray = this.shuffleArray.bind(this);
   }
+  
 
   handleChange() {}
 
   handleSubmit() {}
 
-  componentDidMount() {
-    fetch("/getCards")
+  async componentDidMount() {
+    await fetch("/getCards")
       .then(res => res.json())
       .then(jsondata => {
         this.setState({cards: jsondata})
-      }); 
-      this.renderItems();
+      });
   }
 
-  renderItems() {
-    console.log('inside renderItems');
-    console.log(this.state.cards);
+  shuffleArray() {
+    //console.log(this.state.cards);
+    let array = this.state.cards;
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    this.setState({cards: array});
   }
 
   render () {
     return (
       <div>
         <Header />
+        <button onClick={this.shuffleArray}>Shuffle</button>
         <div className='App-body'>
         {this.state.cards.map((card) => (
-          <div key={card.id}>
-            <Card key={card.id} suit={card.suit} number={card.number}/>
-          </div>
+          <Card key={card.id} suit={card.suit} number={card.number}/>
         ))}
-        <Card suit='Heart' number={3}/>
-        <Card suit='Heart' number={3}/>
         </div>
       </div>
       
