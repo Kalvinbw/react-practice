@@ -92,7 +92,6 @@ function makeDeck() {
         let c = new Card(i, 'Joker', names[4], 0, ability[2], values[2]);
         cardAr.push(c);
     }
-    console.log(cardAr);
     let deck = new Deck(cardAr);
     return [deck, cardAr];
 }
