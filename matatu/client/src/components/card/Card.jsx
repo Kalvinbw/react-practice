@@ -9,16 +9,23 @@ class Card extends React.Component {
         }
         
         this.onClick = this.onClick.bind(this);
-        this.componentDidMount = this.componentDidMount.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     onClick() {
         let toggle = !this.state.show;
         this.setState({show: toggle});
+        this.props.handleChange(this.props.id)
     }
 
     componentDidMount() {
-        
+        if(this.props.show) {
+            this.setState({show: true});
+        }
+    }
+
+    handleChange() {
+        this.props.handleChange();
     }
 
     componentDidUpdate(prevProps) {
@@ -29,8 +36,9 @@ class Card extends React.Component {
 
     render() {
         if(this.state.show){
+            let c = this.props.className === 'Hand' ? 'Hand flipped' : 'Card flipped';
             return (
-                <div className='Card flipped' onClick={this.onClick}>
+                <div className={c} onClick={this.onClick}>
                     <h6>{this.props.suit}</h6>
                     <img src={logo} alt='react logo'></img>
                     <h6>{this.props.number}</h6>
@@ -38,7 +46,7 @@ class Card extends React.Component {
             );
         } else {
             return (
-                <div className='Card' onClick={this.onClick}>
+                <div className={this.props.className} onClick={this.onClick}>
                     <img src={logo} alt='react logo'></img>
                     <h6>Click to flip</h6>
                 </div>

@@ -8,16 +8,32 @@ class App extends React.Component {
     super();
     this.state = {
       cards: [],
-      flip: false
+      flip: false,
+      hand: []
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.shuffleArray = this.shuffleArray.bind(this);
-    this.loadCards = this.loadCards.bind(this);
     this.flipAll = this.flipAll.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
   
 
-  handleChange() {}
+  handleChange(ID) {
+    let newArray = this.state.cards.slice();
+    let handArray = this.state.hand.slice();
+    for(let i = 0; i < newArray.length; i++) {
+      if(newArray[i].id === ID) {
+        console.log('match found!')
+        let c = newArray.splice(i, 1);
+        handArray.push(c[0]);
+        break;
+      }
+    }
+    this.setState({
+      cards: newArray,
+      hand: handArray
+    });
+  }
 
   handleSubmit() {}
 
@@ -27,14 +43,7 @@ class App extends React.Component {
       .then(jsondata => {
         this.setState({cards: jsondata})
       });
-  }
-
-  loadCards() {
-    let renderCards = this.state.cards.map((card) => (
-      <Card key={card.id} suit={card.suit} 
-      number={card.number} show={this.state.flip} className='Card'/>
-    ))
-    return renderCards;
+    this.shuffleArray();
   }
 
   shuffleArray() {
@@ -53,15 +62,33 @@ class App extends React.Component {
   }
 
   render () {
+    let deckHand = <p className='App-link'>Hand</p>;
+    if(this.state.hand.length > 0) {
+      deckHand = this.state.hand.map((h) => (
+        <Card key={h.id} id={h.id} suit={h.suit} 
+        number={h.number} show={true} 
+        className='Hand' handleChange={this.handleChange}/>
+      ));
+    }
+
     return (
       <div>
         <Header />
         <button onClick={this.shuffleArray}>Shuffle</button>
         <button onClick={this.flipAll}>Flip All</button>
         <div className='App-body'>
-          
-            {this.loadCards()}
-          
+          <div className='H-stack'>
+            <div className='Deck'>
+              {this.state.cards.map((card) => (
+                <Card key={card.id} id={card.id} suit={card.suit} 
+                number={card.number} show={this.state.flip} 
+                className='Card' handleChange={this.handleChange}/>
+              ))}
+            </div>
+          </div>
+          <div className='H-stack' style={{backgroundColor: '#222f49'}}>
+            {deckHand}
+          </div>
         </div>
       </div>
       
