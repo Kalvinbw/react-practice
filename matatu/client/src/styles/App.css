@@ -75,3 +75,8 @@ h6 {
   margin: 0;
   color: white;
 }
+
+img {
+  max-height: 50%;
+  max-width: 50%;
+}
