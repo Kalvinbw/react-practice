@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 10vh;
+  max-height: 7vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,8 +58,8 @@
 }
 
 .Deck {
-  height: 19rem;
-  width: 13rem;
+  height: 13rem;
+  width: 9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,8 +72,8 @@
   border: white;
   border-radius: 15px;
   border-style: solid;
-  height: 19rem;
-  width: 13rem;
+  height: 13rem;
+  width: 9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,8 +87,8 @@
   border: white;
   border-radius: 15px;
   border-style: solid;
-  height: 19rem;
-  width: 13rem;
+  height: 13rem;
+  width: 9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
