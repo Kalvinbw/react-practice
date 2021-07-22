@@ -8,27 +8,26 @@ class App extends React.Component {
     super();
     this.state = {
       cards: [],
-      flip: false,
+      playDeck: [],
       hand: {hCards: [], turn: true},
       oppHand: {hCards: [], turn: false}
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.shuffleArray = this.shuffleArray.bind(this);
     this.flipAll = this.flipAll.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleDraw = this.handleDraw.bind(this);
+    this.handlePlay = this.handlePlay.bind(this);
   }
   
 
-  handleChange(ID) {
+  handleDraw(ID) {
     console.log('change called');
     //console.log(this.state);
     let newArray = this.state.cards.slice();
-    let handArray = [];
-    if(this.state.hand.turn) {
-      handArray = this.state.hand.hCards.slice();
-    } else {
-      handArray = this.state.oppHand.hCards.slice();
-    }
+    let handArray = this.state.hand.turn ? 
+      this.state.hand.hCards.slice() :
+      this.state.oppHand.hCards.slice();
+
     for(let i = 0; i < newArray.length; i++) {
       if(newArray[i].id === ID) {
         let c = newArray.splice(i, 1);
@@ -50,6 +49,28 @@ class App extends React.Component {
       });
     }
     
+  }
+
+  handlePlay(ID) {
+    console.log('play called');
+    let hands = [this.state.hand.hCards.slice(), this.state.oppHand.hCards.slice()];
+    let play = this.state.playDeck.slice();
+
+    let p = this.state.hand.turn ? 0 : 1;
+    for(let i = 0; i < hands[p].length; i++) {
+      if(hands[p][i].id === ID) {
+        let c = hands[p].splice(i, 1);
+        play.push(c[0]);
+        break;
+      }
+    }
+    console.log(play);
+    this.setState({
+      hand: {hCards: hands[0], turn: !this.state.hand.turn},
+      oppHand: {hCards: hands[1], turn: !this.state.oppHand.turn},
+      playDeck: play
+    });
+
   }
 
   handleSubmit() {}
@@ -85,7 +106,7 @@ class App extends React.Component {
       deckHand = this.state.hand.hCards.map((h) => (
         <Card key={h.id} id={h.id} suit={h.suit} 
         number={h.number} show={true} 
-        className='Hand' handleChange={this.handleChange}/>
+        className='Hand' handleChange={this.handlePlay}/>
       ));
     }
 
@@ -95,26 +116,41 @@ class App extends React.Component {
       opHand = this.state.oppHand.hCards.map((h) => (
         <Card key={h.id} id={h.id} suit={h.suit} 
         number={h.number} show={true} 
-        className='Hand' handleChange={this.handleChange}/>
+        className='Hand' handleChange={this.handlePlay}/>
       ));
     }
+
+    //load play pile
+    let playPile = <p className='App-link'>Play Pile</p>;
+    if(this.state.playDeck.length > 0) {
+      console.log(this.state.playDeck);
+      playPile = this.state.playDeck.map((p) => (
+        <Card key={p.id} id={p.id} suit={p.suit} 
+        number={p.number} show={true} 
+        className='Card' handleChange={this.handleDraw}/>
+      ));
+    }
+
+    let turn = this.state.hand.turn ? 'Your Turn' : 'Opponents Turn';
 
     return (
       <div>
         <Header />
-        <button onClick={this.shuffleArray}>Shuffle</button>
-        <button onClick={this.flipAll}>Flip All</button>
         <div className='App-body'>
           <div className='H-stack' style={{backgroundColor: '#222f49'}}>
             {opHand}
           </div>
           <div className='H-stack'>
-            <div className='Deck'>
+            <div className='Deck' id='drawPile'>             
               {this.state.cards.map((card) => (
                 <Card key={card.id} id={card.id} suit={card.suit} 
                 number={card.number} show={this.state.flip} 
-                className='Card' handleChange={this.handleChange}/>
+                className='Card' handleChange={this.handleDraw}/>
               ))}
+            </div>
+            <p>{turn}</p>
+            <div className='Deck' id='playPile'>
+              {playPile}
             </div>
           </div>
           <div className='H-stack' style={{backgroundColor: '#222f49'}}>

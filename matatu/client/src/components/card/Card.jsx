@@ -13,8 +13,8 @@ class Card extends React.Component {
     }
 
     onClick() {
-        let toggle = !this.state.show;
-        this.setState({show: toggle});
+        // let toggle = !this.state.show;
+        // this.setState({show: toggle});
         this.props.handleChange(this.props.id)
     }
 
@@ -48,7 +48,7 @@ class Card extends React.Component {
             return (
                 <div className={this.props.className} onClick={this.onClick}>
                     <img src={logo} alt='react logo'></img>
-                    <h6>Click to flip</h6>
+                    <h6>Click to draw</h6>
                 </div>
             );
         }
