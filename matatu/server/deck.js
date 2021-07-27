@@ -5,7 +5,8 @@ class Card {
         this.name = nam;
         this.number = num;
         this.ability = abil;
-        this.value = v
+        this.value = v;
+        this.canPlay = false;
     }
 }
 
@@ -64,17 +65,17 @@ function makeDeck() {
                     break;
                 case 11:
                     nam = names[1];
-                    val = num;
+                    val = 10;
                     abil = null;
                     break;
                 case 12:
                     nam = names[2];
-                    val = num;
+                    val = 10;
                     abil = null;
                     break;
                 case 13:
                     nam = names[3];
-                    val = num;
+                    val = 100;
                     abil = null;
                     break;
                 default:
