@@ -1,6 +1,6 @@
 {
-  "short_name": "Yahtzee App",
-  "name": "Yahtzee App",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +18,8 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "./yahtzee",
+  "start_url": ".",
   "display": "standalone",
-  "theme_color": "#A82626",
-  "background_color": "#A82626"
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
 }
