@@ -70,3 +70,26 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open("static").then(cache => {
+      return cache.addAll([
+        "./",
+        "./images/dice1Use.jpg",
+        "./images/dice2Use.jpg",
+        "./images/dice3Use.jpg",
+        "./images/dice4Use.jpg",
+        "./images/dice5Use.jpg",
+        "./images/dice6Use.jpg",
+      ]);
+    })
+  );
+});
+
+self.addEventListener("fetch", e => {
+  e.respondWith(
+    caches.match(e.request).then(response => {
+      return response || fetch(e.request);
+    })
+  );
+});
