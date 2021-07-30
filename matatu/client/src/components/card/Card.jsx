@@ -1,57 +1,34 @@
 import React from 'react';
 import logo from '../../assets/logo.svg';
 
-class Card extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            show: false
+function Card(props) {
+    function onClick() {
+        props.handleChange(props.card);
+    }
+
+    let myClass = props.className;
+    if(props.show) {
+        myClass = myClass + ' flipped';
+        if(props.card.canPlay) {
+            myClass = myClass + ' playable'
         }
-        
-        this.onClick = this.onClick.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    onClick() {
-        this.props.handleChange(this.props.card)
-    }
-
-    componentDidMount() {
-        if(this.props.show) {
-            this.setState({show: true});
+        if(props.card.selected) {
+            myClass = myClass + ' selected';
         }
-    }
-
-    handleChange() {
-        this.props.handleChange();
-    }
-
-    componentDidUpdate(prevProps) {
-        if(this.props.show !== prevProps.show){
-            this.setState({show: this.props.show});
-        }
-    }
-
-    render() {
-        if(this.state.show){
-            let c = this.props.className === 'Hand' ? 'Hand flipped' : 'Card flipped';
-            c = this.props.card.canPlay ? c + ' playable' : c;
-            return (
-                <div className={c} onClick={this.onClick}>
-                    <h6>{this.props.card.suit}</h6>
+        return (
+            <div className={myClass} onClick={onClick}>
+                    <h6>{props.card.suit}</h6>
                     <img src={logo} alt='react logo'></img>
-                    <h6>{this.props.card.number}</h6>
-                </div>
-            );
-        } else {
-            return (
-                <div className={this.props.className} onClick={this.onClick}>
-                    <img src={logo} alt='react logo'></img>
-                    <h6>Click to draw</h6>
-                </div>
-            );
-        }
-        
+                    <h6>{props.card.number}</h6>
+            </div>
+        );
+    } else {
+        return (
+            <div className={props.className} onClick={onClick}>
+                <img src={logo} alt='react logo'></img>
+                <h6>Click to draw</h6>
+            </div>
+        );
     }
 }
 

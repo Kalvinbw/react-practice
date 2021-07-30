@@ -12,17 +12,19 @@ class App extends React.Component {
       playDeck: [],
       players: [
         {cards: [],
-        turn: true},
+        turn: true,
+        playCalled: false},
         {cards: [],
-        turn: false}
+        turn: false,
+        playCalled: false}
       ],
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.shuffleArray = this.shuffleArray.bind(this);
     this.flipAll = this.flipAll.bind(this);
     this.handleDraw = this.handleDraw.bind(this);
-    //this.handlePlay = this.handlePlay.bind(this);
-    this.ability = this.ability.bind(this);
+    this.callPlay = this.callPlay.bind(this);
+    this.handlePlay = this.handlePlay.bind(this);
   }
 
   async componentDidMount() {
@@ -79,7 +81,7 @@ class App extends React.Component {
     players[playerID].cards = playerCards;
 
     // change turn to the next player
-    let nextTurn = (playerID === players.length - 1) ? 0 : playerID++;
+    let nextTurn = (playerID === players.length - 1) ? 0 : playerID + 1;
     players[nextTurn].turn = !players[nextTurn].turn;
     players[playerID].turn = !players[playerID].turn;
 
@@ -90,50 +92,53 @@ class App extends React.Component {
     });
   }
 
-  handlePlay(card) {
+  callPlay() {
     console.log('play called');
-    // let players = this.state.players;
-    // let play = this.state.playDeck.slice();
-
-    // let p = this.state.players[0].turn ? 0 : 1;
-    // if(play[play.length - 1].suit === card.suit || 
-    //    play[play.length - 1].number === card.number) {
-    //     let index = players[p].cards.findIndex(item => item.id === card.id);
-    //     if(index !== -1) {
-    //       let c = players[p].cards.splice(index, 1);
-    //       play.push(c[0]);
-    //     } else {
-    //       alert('You cant do that');
-    //     }
-    // }
-
-    // this.setState({
-    //   hand: {hCards: hands[0], turn: !this.state.hand.turn},
-    //   oppHand: {hCards: hands[1], turn: !this.state.oppHand.turn},
-    //   playDeck: play
-    // });
-
+    let players = this.state.players;
+    for(let i = 0; i < players.length; i++) {
+      if(players[i].turn) {
+        players[i].playCalled = true;
+        this.setState({players: players}, console.log(this.state));
+      }
+    }
   }
 
-  ability() {
+  handlePlay(playedCards) {
+    console.log('handle play called from app');
+    let playerNum;
+    let players = [...this.state.players];
+    let playPile = [...this.state.playDeck];
 
+    for(let i = 0; i < players.length; i++) {
+      if(players[i].turn) {
+        playerNum = i;
+        break;
+      }
+    }
+
+    players[playerNum].playCalled = false;
+    for(let i = 0; i < playedCards.length; i++) {
+      for(let j = 0; j < players[playerNum].cards.length; j++) {
+        //push card to play pile if it matches the id given
+        if(playedCards[i].id === players[playerNum].cards[j].id) {
+          let card = players[playerNum].cards.splice(j, 1);
+          playPile.push(card[0]);
+        }
+      }
+    }
+
+     // change turn to the next player
+     let nextTurn = (playerNum === players.length - 1) ? 0 : playerNum + 1;
+     players[nextTurn].turn = !players[nextTurn].turn;
+     players[playerNum].turn = !players[playerNum].turn;
+
+    this.setState({
+      playDeck: playPile,
+      players: players
+    }, console.log(this.state));
   }
 
   handleSubmit() {}
-
-
-  playable(cards, topCard) {
-    for(let i = 0; i < cards.length; i++) {
-      for(let j = 0; j < cards[i].length; j++) {
-        if(cards[i][j].suit === topCard.suit
-          || cards[i][j].number === topCard.number) {
-            console.log('i tried');
-            cards[i][j].canPlay = true;
-          }
-      }
-    }
-    return cards;
-  }
 
   flipAll() {
     let toggle = !this.state.flip;
@@ -150,7 +155,7 @@ class App extends React.Component {
         <Header />
 
         <div className='App-body'>
-          <Hand player={this.state.players[1]} 
+          <Hand id={1} player={this.state.players[1]} 
           topCard={this.state.playDeck[this.state.playDeck.length - 1]}
           action={this.state.players[1].turn ? 
             this.handlePlay : this.doNothing}/>
@@ -173,16 +178,16 @@ class App extends React.Component {
 
             <p>{this.state.players[0].turn ? 'Your Turn' : "Opponent's Turn"}</p>
 
-            <input type='button' onClick={this.handlePlay} value='Play Selected Card(s)'/>
+            <input type='button' onClick={this.callPlay} value='Play Selected Card(s)'/>
           </div>
 
-          <Hand player={this.state.players[0]} 
+          <Hand id={0} player={this.state.players[0]} 
           topCard={this.state.playDeck[this.state.playDeck.length - 1]}
           action={this.state.players[0].turn ? 
             this.handlePlay : this.doNothing}/>
 
         </div>
-        
+
       </div>
       
     );
