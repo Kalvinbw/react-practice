@@ -57,7 +57,7 @@ function makeDeck() {
                 case 8:
                     nam = num;
                     val = values[1];
-                    abil = ability[4];
+                    abil = false;
                     break;
                 case 10:
                     nam = num;
@@ -67,22 +67,22 @@ function makeDeck() {
                 case 11:
                     nam = names[1];
                     val = 10;
-                    abil = null;
+                    abil = false;
                     break;
                 case 12:
                     nam = names[2];
                     val = 10;
-                    abil = null;
+                    abil = false;
                     break;
                 case 13:
                     nam = names[3];
                     val = 100;
-                    abil = null;
+                    abil = false;
                     break;
                 default:
                     nam = num;
                     val = num;
-                    abil = null;
+                    abil = false;
             } //end switch
             let c = new Card(ID, sui, nam, num, abil, val);
             cardAr.push(c);

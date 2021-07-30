@@ -16,15 +16,26 @@ class Hand extends React.Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log('get derived state called');
+        //console.log('get derived state called');
         if(state.selectedCards.length > 0) {
             return null;
         }
         if(props.player.turn) {
             let hand = [...props.player.cards];
+
+            //if joker is on top, any card is playable
+            // if(props.topCard.number === 13) {
+            //     for(let i = 0; i < hand.length; i++) {
+            //         hand[i].canPlay = true;
+            //     }
+            //     return {cards: hand};
+            // }
+
+            //check which cards are playable
             for(let i = 0; i < hand.length; i++) {
                 if(hand[i].suit === props.topCard.suit ||
-                    hand[i].number === props.topCard.number) {
+                    hand[i].number === props.topCard.number || 
+                    hand[i].number === 8 || hand[i].number === 0) {
                         hand[i].canPlay = true;
                     } else {
                         hand[i].canPlay = false;
@@ -42,10 +53,10 @@ class Hand extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log('comp did update called');
-        console.log(this.props.player.playCalled);
+        // console.log('comp did update called');
+        // console.log(this.props.player.playCalled);
         if(this.props.player.playCalled) {
-            console.log('true');
+            //console.log('true');
             let cards = this.state.cards;
             for(let i = 0; i < cards.length; i++) {
                 cards[i].canPlay = false;
@@ -60,13 +71,17 @@ class Hand extends React.Component {
     // }
 
     handleSelect(card) {
-        //Sanity Check/
-        console.log('handle select clicked');
+        //Sanity Check
+        //console.log('handle select clicked');
         if(!this.state.selectedCards.length > 0) {
             if(card.suit !== this.props.topCard.suit) {
                 if(card.number !== this.props.topCard.number) {
-                    alert('This card is not playable');
-                    return;
+                    if(card.number !== 8) {
+                        if(card.number !== 0) {
+                            alert('This card is not playable');
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -85,7 +100,7 @@ class Hand extends React.Component {
                         hand[j].selected = !hand[j].selected;
                     }
                 }
-                this.setState({selectedCards: selectedCards}, console.log(this.state));
+                this.setState({selectedCards: selectedCards});
                 return;
             }
         }
@@ -98,22 +113,21 @@ class Hand extends React.Component {
             }
 
             if(hand[i].number === card.number) {
-                console.log('match number found');
+                //console.log('match number found');
                 hand[i].canPlay = true;
-                console.log(hand[i].canPlay);
             } else {
                 hand[i].canPlay = false;
             }
         }
-        console.log(hand);
+        //console.log(hand);
         this.setState({
             cards: hand,
             selectedCards: selectedCards
-        }, console.log(this.state));
+        });
     }
 
     handlePlay() {
-        console.log('handle play called from hand')
+        //console.log('handle play called from hand')
         let state = this.state;
         for(let i = 0; i < state.cards.length; i++) {
             state.cards[i].canPlay = false;
