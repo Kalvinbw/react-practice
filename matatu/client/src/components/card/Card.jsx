@@ -13,8 +13,6 @@ class Card extends React.Component {
     }
 
     onClick() {
-        // let toggle = !this.state.show;
-        // this.setState({show: toggle});
         this.props.handleChange(this.props.card)
     }
 

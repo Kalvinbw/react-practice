@@ -7,6 +7,7 @@ class Card {
         this.ability = abil;
         this.value = v;
         this.canPlay = false;
+        this.selected = false;
     }
 }
 
