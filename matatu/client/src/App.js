@@ -50,7 +50,7 @@ class App extends React.Component {
           players: players,
           playDeck: topCard
         });
-      });
+      }).catch(e => console.log(e));
   }
 
   shuffleArray(array) {
@@ -163,6 +163,7 @@ class App extends React.Component {
      players[nextTurn].turn = !players[nextTurn].turn;
      players[playerNum].turn = !players[playerNum].turn;
 
+     /* TODO: Check if deck is empty and reset it */
      this.checkGameOver();
 
     this.setState({
@@ -255,6 +256,8 @@ class App extends React.Component {
       return <GameOver />
     }
 
+    let DoneLoading = (this.state.cards.length > 0)
+
     return (
       <div>
         <Header />
@@ -266,6 +269,8 @@ class App extends React.Component {
             this.handlePlay : this.doNothing}/>
 
           <div className='H-stack'>
+
+            {DoneLoading ? null : <p>Loading Game</p>}
 
             <div className='Deck' id='drawPile'>             
               {this.state.cards.map((card) => (
@@ -282,10 +287,10 @@ class App extends React.Component {
             </div>
 
             <p className={this.state.players[0].turn ? 'App-link' : null}>
-              {this.state.players[0].turn ? 'Your Turn' : "Opponent's Turn"}
+              {DoneLoading ? this.state.players[0].turn ? 'Your Turn' : "Opponent's Turn" : null}
             </p>
 
-            <input type='button' onClick={this.callPlay} value='Play Selected Card(s)'/>
+            {DoneLoading ? <input type='button' onClick={this.callPlay} value='Play Selected Card(s)'/> : null}
           </div>
 
           <Hand id={0} player={this.state.players[0]} 
