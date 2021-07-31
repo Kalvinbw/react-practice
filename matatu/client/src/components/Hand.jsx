@@ -23,6 +23,8 @@ class Hand extends React.Component {
         if(props.player.turn) {
             let hand = [...props.player.cards];
 
+            // TODO: handle joker on top
+
             //if joker is on top, any card is playable
             // if(props.topCard.number === 13) {
             //     for(let i = 0; i < hand.length; i++) {
@@ -85,6 +87,7 @@ class Hand extends React.Component {
                 }
             }
         }
+        /* TODO: handle joker selected */
         
 
         //get variables

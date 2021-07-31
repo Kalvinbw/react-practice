@@ -2,12 +2,16 @@ import './styles/App.css';
 import Header from './components/header/header';
 import Hand from './components/Hand';
 import Card from './components/card/Card';
+import Begin from './components/Begin'
+import GameOver from './components/GameOver'
 import React from 'react';
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      hasBegun: false,
+      gameOver: false,
       cards: [],
       playDeck: [],
       players: [
@@ -24,6 +28,11 @@ class App extends React.Component {
     this.handleDraw = this.handleDraw.bind(this);
     this.callPlay = this.callPlay.bind(this);
     this.handlePlay = this.handlePlay.bind(this);
+    this.skipTurn = this.skipTurn.bind(this);
+    this.drawExtra = this.drawExtra.bind(this);
+    this.startGame = this.startGame.bind(this);
+    this.endGame = this.endGame.bind(this);
+    this.checkGameOver = this.checkGameOver.bind(this);
   }
 
   async componentDidMount() {
@@ -129,10 +138,9 @@ class App extends React.Component {
     //set play called to false
     players[playerNum].playCalled = false;
 
-    //loop through played cards and move them to the pile
+    //loop through played cards and move them from hand to the pile
     let ability;
     for(let i = 0; i < playedCards.length; i++) {
-      console.log(playedCards[0].id)
       if(playedCards[i].ability !== false) {ability = true}
       for(let j = 0; j < players[playerNum].cards.length; j++) {
         //push card to play pile if it matches the id given
@@ -146,14 +154,16 @@ class App extends React.Component {
     let nextTurn = (playerNum === players.length - 1) ? 0 : playerNum + 1;
 
     if(ability) {
-      console.log(nextTurn);
       this.abilites(playedCards, players, nextTurn);
+      this.checkGameOver();
       return;
     }
 
      // change turn to the next player
      players[nextTurn].turn = !players[nextTurn].turn;
      players[playerNum].turn = !players[playerNum].turn;
+
+     this.checkGameOver();
 
     this.setState({
       playDeck: playPile,
@@ -162,6 +172,7 @@ class App extends React.Component {
   }
 
   abilites(cards, players, id) {
+    /* TODO: handle 8 cards */
     console.log(cards[0].ability)
     switch(cards[0].ability) {
       case 'Draw 2':
@@ -174,7 +185,7 @@ class App extends React.Component {
         this.drawExtra(players, 5, id, cards);
         break;
       case 'Skip Turn':
-        this.skipTurn();
+        this.skipTurn(cards, players);
         break;
       default:
         return -1;
@@ -182,22 +193,20 @@ class App extends React.Component {
   }
 
   drawExtra(players, drawAmount, nextid, cards) {
-    console.log('draw extra called');
+    //init variables
     let deck = [...this.state.cards];
     let play = [...this.state.playDeck];
-    console.log(deck.length);
+
+    //loop over deck and add them to other players hand
     for(let i = 0; i < cards.length; i++) {
       let extra = deck.splice(0, drawAmount);
       players[nextid].cards.push(...extra);
     }
-    console.log(players[nextid]);
 
-    // players[nextid].turn = !players[nextid].turn;
-    // let x = (nextid === 0) ? players.length - 1 : nextid - 1;
-    // players[x].turn = !players[x].turn;
-
+    //add selected cards to play pile
     play.push(...cards);
 
+    //set state
     this.setState({
       cards: deck,
       playDeck: play,
@@ -205,11 +214,47 @@ class App extends React.Component {
     })
   }
 
+  skipTurn(cards, players) {
+    let play = [...this.state.playDeck];
+    play.push(...cards);
+
+    this.setState({
+      playDeck: play,
+      players: players
+    })
+
+  }
+
+  startGame() {
+    this.setState({hasBegun: true});
+  }
+
+  checkGameOver() {
+    for(let i = 0; i < this.state.players.length; i++) {
+      if(this.state.players[i].cards.length === 0) {
+        this.endGame();
+      }
+    }
+  }
+
+  endGame() {
+    this.setState({gameOver: true});
+  }
+
+  //Send to non turn person so that they can't click cards
   doNothing() {
     return;
   }
 
   render () {
+    if(!this.state.hasBegun) {
+      return <Begin handleClick={this.startGame}/>
+    }
+
+    if(this.state.gameOver) {
+      return <GameOver />
+    }
+
     return (
       <div>
         <Header />
