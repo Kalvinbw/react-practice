@@ -102,7 +102,7 @@ class App extends React.Component {
     let players = this.state.players;
     for(let i = 0; i < players.length; i++) {
       if(players[i].turn) {
-        players[i].playCalled = true;
+        players[i].playCalled = !players[i].playCalled;
         this.setState({players: players});
       }
     }
@@ -110,6 +110,10 @@ class App extends React.Component {
 
   handlePlay(playedCards) {
     //console.log('handle play called from app');
+    if(!playedCards) {
+      this.callPlay();
+      return;
+    }
     let playerNum;
     let players = [...this.state.players];
     let playPile = [...this.state.playDeck];

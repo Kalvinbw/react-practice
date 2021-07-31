@@ -128,6 +128,11 @@ class Hand extends React.Component {
 
     handlePlay() {
         //console.log('handle play called from hand')
+        if(this.state.selectedCards.length === 0) {
+            alert('Please select which cards you want to play');
+            this.props.action();
+            return;
+        }
         let state = this.state;
         for(let i = 0; i < state.cards.length; i++) {
             state.cards[i].canPlay = false;
