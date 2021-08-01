@@ -32,15 +32,15 @@ function Begin(props) {
                                 </ul>
                                 <li>The 2: Next player has to draw two (can be stacked to make them draw more)</li>
                                 <li>The 10: Next player has to draw 4 (can be stacked to make them draw more)</li>
-                                <li>The 8: Wild Choice</li>
+                                <li>The 8: Wild</li>
                                 <ul>
                                     <li>Can be played anytime during your turn</li>
-                                    <li>Once layed you get to choose what the next player has to lay</li>
+                                    {/* <li>Once layed you get to choose what the next player has to lay</li>
                                     <ul>
                                         <li>E.x. Two-of-a-kind, A four, A Heart</li>
                                     </ul>
                                     <li>You cannot demand both a suit and a number</li>
-                                    <li>You must be able to meet your own demand with the cards in your hand</li>
+                                    <li>You must be able to meet your own demand with the cards in your hand</li> */}
                                 </ul>
                                 <li>The Joker: Wild Draw Five</li>
                                 <ul><li>Can be played anytime during your turn and the next player must draw 5 (Can be stacked)</li></ul>
@@ -63,7 +63,8 @@ function Begin(props) {
                     
                     <input type='button' 
                     value='Begin Game!'
-                    onClick={onClick} />
+                    onClick={onClick} 
+                    className='button' />
                 </div>
             </div>
         </div>

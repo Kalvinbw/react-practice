@@ -17,10 +17,12 @@ class App extends React.Component {
       players: [
         {cards: [],
         turn: true,
-        playCalled: false},
+        playCalled: false,
+        score: 0},
         {cards: [],
         turn: false,
-        playCalled: false}
+        playCalled: false,
+        score: 0}
       ],
     }
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -33,6 +35,7 @@ class App extends React.Component {
     this.startGame = this.startGame.bind(this);
     this.endGame = this.endGame.bind(this);
     this.checkGameOver = this.checkGameOver.bind(this);
+    this.checkDeck = this.checkDeck.bind(this);
   }
 
   async componentDidMount() {
@@ -156,20 +159,22 @@ class App extends React.Component {
     if(ability) {
       this.abilites(playedCards, players, nextTurn);
       this.checkGameOver();
+      this.checkDeck();
       return;
     }
 
      // change turn to the next player
-     players[nextTurn].turn = !players[nextTurn].turn;
-     players[playerNum].turn = !players[playerNum].turn;
-
-     /* TODO: Check if deck is empty and reset it */
-     this.checkGameOver();
+    players[nextTurn].turn = !players[nextTurn].turn;
+    players[playerNum].turn = !players[playerNum].turn;
 
     this.setState({
       playDeck: playPile,
       players: players
     });
+
+    /* TODO: Check if deck is empty and reset it */
+    this.checkGameOver();
+    this.checkDeck();
   }
 
   abilites(cards, players, id) {
@@ -188,10 +193,40 @@ class App extends React.Component {
       case 'Skip Turn':
         this.skipTurn(cards, players);
         break;
+      // case 'Wild':
+      //   this.wildCard(cards, players, id);
+      //   break;
       default:
         return -1;
     }
   }
+
+  // wildCard(cards, players, id) {
+  //   let prevId = id === 0 ? players.length - 1 : id--;
+  //   let hand = players[prevId].cards;
+  //   let options = {
+  //     suits: ['Heart', 'Diamond', 'Spade', 'Club'],
+  //     numbers: [1,2,3,4,5,6,7,9,10,11,12,13]
+  //   }
+  //   let yourOptions = [];
+
+  //   for(let i = 0; i < hand.length; i++) {
+  //     if(hand[i].suit in options.suits) {
+  //       if(!(hand[i].suit in yourOptions)) {
+  //         yourOptions.push(hand[i].suit)
+  //       }
+  //     }
+
+  //     if(hand[i].number in options.numbers) {
+  //       if(!(hand[i].number in yourOptions)) {
+  //         yourOptions.push(hand[i].number)
+  //       }
+  //     }
+  //   }
+
+  //   players[id].turn
+
+  // }
 
   drawExtra(players, drawAmount, nextid, cards) {
     //init variables
@@ -238,8 +273,35 @@ class App extends React.Component {
     }
   }
 
+  checkDeck() {
+    let deck = [...this.state.cards];
+    let playPile = [...this.state.playDeck];
+
+    if(deck.length === 0) {
+      let topCard = playPile.pop();
+      this.setState({
+        playDeck: topCard,
+        cards: playPile
+      });
+    }
+  }
+
   endGame() {
-    this.setState({gameOver: true});
+    let players = this.state.players;
+
+    for(let i = 0; i < players.length; i++) {
+      let score = 0;
+      for(let j = 0; j < players[i].cards; i++) {
+        score += players[i].cards[j].value;
+      }
+      players[i].score = score;
+      players[i].id = i + 1;
+    }
+
+    this.setState({
+      gameOver: true,
+      players: players
+    });
   }
 
   //Send to non turn person so that they can't click cards
@@ -253,7 +315,7 @@ class App extends React.Component {
     }
 
     if(this.state.gameOver) {
-      return <GameOver />
+      return <GameOver players={this.state.players}/>
     }
 
     let DoneLoading = (this.state.cards.length > 0)
