@@ -7,14 +7,6 @@ import GameOver from './components/GameOver';
 import React from 'react';
 import io from 'socket.io-client';
 
-let socket = io('/', {
-  withCredentials: true,
-});
-socket.on('connection', (data) => {
-  console.log('connection done');
-  console.log(data);
-});
-
 class App extends React.Component {
   constructor() {
     super();
@@ -34,6 +26,9 @@ class App extends React.Component {
         score: 0}
       ],
     }
+    this.socket = io('/', {
+      withCredentials: true,
+    });;
     this.shuffleArray = this.shuffleArray.bind(this);
     this.handleDraw = this.handleDraw.bind(this);
     this.callPlay = this.callPlay.bind(this);
@@ -62,6 +57,14 @@ class App extends React.Component {
           playDeck: topCard
         });
       }).catch(e => console.log(e));
+    this.configureSocket();
+  }
+
+  configureSocket() {
+    this.socket.on('connection', (data) => {
+      console.log('connection done');
+      console.log(data);
+    });
   }
 
   shuffleArray(array) {
@@ -118,12 +121,12 @@ class App extends React.Component {
   }
 
   callPlay() {
-    //console.log('play called');
+    console.log('play called');
     let players = this.state.players;
     for(let i = 0; i < players.length; i++) {
       if(players[i].turn) {
         players[i].playCalled = !players[i].playCalled;
-        this.setState({players: players});
+        //this.setState({players: players});
       }
     }
   }

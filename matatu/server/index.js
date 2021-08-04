@@ -34,6 +34,10 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
     socket.emit('connection', deck);
+
+    socket.on('callPlay', () => {
+        socket.emit('playCalled');
+    });
 })
 
 

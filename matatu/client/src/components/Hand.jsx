@@ -13,6 +13,10 @@ class Hand extends React.Component {
         //this.componentDidUpdate = this.componentDidUpdate.bind(this);
         //this.checkHand = this.checkHand.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        let socket = this.props.socket;
+        socket.on('playCalled', () => {
+            this.handlePlay();
+        });
     }
 
     static getDerivedStateFromProps(props, state) {
