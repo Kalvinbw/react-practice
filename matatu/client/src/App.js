@@ -311,9 +311,7 @@ class App extends React.Component {
   }
 
   //Send to non turn person so that they can't click cards
-  doNothing() {
-
-  }
+  doNothing() {}
 
   render () {
     if(!this.state.hasBegun) {
