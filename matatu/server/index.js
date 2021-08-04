@@ -1,15 +1,14 @@
 //Server file
 const listenPort = 8080;
 const cors = require('cors');
-let express = require('express');
-let path = require('path');
-let app = express();
+const express = require('express');
+const app = express();
+//const server = require('http').createServer(app);
+const socket = require('socket.io');
+const path = require('path');
 const deck = require('./deck');
 
-//post express 4.16 use
-app.use(express.urlencoded({extended: true}));
-
-app.use(express.static(path.join(__dirname, '../client/build')));
+//app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use(cors());
 
@@ -23,8 +22,16 @@ app.get("/getCards", async (req, res) => {
 });
 
 //listen on the port //the function part is a callback function
-app.listen(listenPort, function() {
+let server = app.listen(listenPort, function() {
     console.log("listener is active on Port " + listenPort);
 });
+
+const io = socket(server);
+io.on('connection', (socket) => {
+    console.log(`New client connected: ${socket.id}`);
+    socket.emit('connection');
+})
+
+
 
 module.exports = app;

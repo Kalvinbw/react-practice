@@ -2,9 +2,15 @@ import './styles/App.css';
 import Header from './components/header/header';
 import Hand from './components/Hand';
 import Card from './components/card/Card';
-import Begin from './components/Begin'
-import GameOver from './components/GameOver'
+import Begin from './components/Begin';
+import GameOver from './components/GameOver';
 import React from 'react';
+import io from 'socket.io-client';
+
+let socket = io.connect('/');
+socket.on('connection', () => {
+  console.log('connection done');
+});
 
 class App extends React.Component {
   constructor() {
@@ -306,7 +312,7 @@ class App extends React.Component {
 
   //Send to non turn person so that they can't click cards
   doNothing() {
-    return;
+
   }
 
   render () {
