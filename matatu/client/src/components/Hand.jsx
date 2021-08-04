@@ -1,6 +1,6 @@
 import '../styles/App.css';
 import React from 'react';
-import Card from './card/Card';
+import Card from './Card';
 
 class Hand extends React.Component {
     constructor(props) {

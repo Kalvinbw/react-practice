@@ -1,15 +1,18 @@
 import './styles/App.css';
-import Header from './components/header/header';
+import Header from './components/header';
 import Hand from './components/Hand';
-import Card from './components/card/Card';
+import Card from './components/Card';
 import Begin from './components/Begin';
 import GameOver from './components/GameOver';
 import React from 'react';
 import io from 'socket.io-client';
 
-let socket = io.connect('/');
-socket.on('connection', () => {
+let socket = io('/', {
+  withCredentials: true,
+});
+socket.on('connection', (data) => {
   console.log('connection done');
+  console.log(data);
 });
 
 class App extends React.Component {
@@ -31,7 +34,6 @@ class App extends React.Component {
         score: 0}
       ],
     }
-    this.componentDidMount = this.componentDidMount.bind(this);
     this.shuffleArray = this.shuffleArray.bind(this);
     this.handleDraw = this.handleDraw.bind(this);
     this.callPlay = this.callPlay.bind(this);

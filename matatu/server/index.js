@@ -3,8 +3,6 @@ const listenPort = 8080;
 const cors = require('cors');
 const express = require('express');
 const app = express();
-//const server = require('http').createServer(app);
-const socket = require('socket.io');
 const path = require('path');
 const deck = require('./deck');
 
@@ -26,10 +24,16 @@ let server = app.listen(listenPort, function() {
     console.log("listener is active on Port " + listenPort);
 });
 
-const io = socket(server);
+
+const io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
 io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
-    socket.emit('connection');
+    socket.emit('connection', deck);
 })
 
 

@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import Header from './header/header';
+import Header from './header';
 import React from 'react';
 
 function Begin(props) {
