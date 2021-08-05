@@ -28,7 +28,7 @@ class App extends React.Component {
     }
     this.socket = io('/', {
       withCredentials: true,
-    });;
+    });
     this.shuffleArray = this.shuffleArray.bind(this);
     this.handleDraw = this.handleDraw.bind(this);
     this.callPlay = this.callPlay.bind(this);
