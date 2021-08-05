@@ -1,5 +1,6 @@
 import '../styles/App.css';
 import Header from './header';
+import BeginForm from './BeginForm';
 import React from 'react';
 
 function Begin(props) {
@@ -60,7 +61,7 @@ function Begin(props) {
                             </ul>
                         </ul>
                     </div>
-                    
+                    <BeginForm rooms={props.rooms} action={props.action}/>
                     <input type='button' 
                     value='Begin Game!'
                     onClick={onClick} 

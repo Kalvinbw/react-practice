@@ -6,6 +6,8 @@ const app = express();
 const path = require('path');
 const deck = require('./deck');
 
+let rooms = [{id: 'main', players: 0}, {id: 'test', players: 0}];
+
 //app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use(cors());
@@ -31,9 +33,10 @@ const io = require('socket.io')(server, {
         methods: ["GET", "POST"]
     }
 });
+
 io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
-    socket.emit('connection', deck);
+    socket.emit('connection', rooms);
 
     socket.on('callPlay', () => {
         socket.emit('playCalled');

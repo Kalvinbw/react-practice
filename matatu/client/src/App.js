@@ -25,6 +25,7 @@ class App extends React.Component {
         playCalled: false,
         score: 0}
       ],
+      rooms: []
     }
     this.socket = io('/', {
       withCredentials: true,
@@ -39,6 +40,7 @@ class App extends React.Component {
     this.endGame = this.endGame.bind(this);
     this.checkGameOver = this.checkGameOver.bind(this);
     this.checkDeck = this.checkDeck.bind(this);
+    this.setGame = this.setGame.bind(this);
   }
 
   async componentDidMount() {
@@ -64,6 +66,9 @@ class App extends React.Component {
     this.socket.on('connection', (data) => {
       console.log('connection done');
       console.log(data);
+      this.setState({
+        rooms: data
+      })
     });
   }
 
@@ -315,12 +320,20 @@ class App extends React.Component {
     });
   }
 
+  setGame(username, room) {
+    this.setState({
+      username: username,
+      room: room
+    });
+    this.socket.emit('joinRoom', username, room);
+  }
+
   //Send to non turn person so that they can't click cards
   doNothing() {}
 
   render () {
     if(!this.state.hasBegun) {
-      return <Begin handleClick={this.startGame}/>
+      return <Begin handleClick={this.startGame} action={this.setGame} rooms={this.state.rooms}/>
     }
 
     if(this.state.gameOver) {
@@ -341,7 +354,7 @@ class App extends React.Component {
 
           <div className='H-stack'>
 
-            {DoneLoading ? null : <p>Loading Game</p>}
+            {DoneLoading ? null : <p>Loaddecking Game</p>}
 
             <div className='Deck' id='drawPile'>             
               {this.state.cards.map((card) => (
