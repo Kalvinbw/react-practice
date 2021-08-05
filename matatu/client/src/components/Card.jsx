@@ -3,7 +3,7 @@ import logo from '../assets/logo.svg';
 
 function Card(props) {
     function onClick() {
-        props.handleChange(props.card);
+        //props.handleChange(props.card);
     }
 
     let myClass = props.className;

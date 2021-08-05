@@ -332,9 +332,9 @@ class App extends React.Component {
   doNothing() {}
 
   render () {
-    if(!this.state.hasBegun) {
-      return <Begin handleClick={this.startGame} action={this.setGame} rooms={this.state.rooms}/>
-    }
+    // if(!this.state.hasBegun) {
+    //   return <Begin handleClick={this.startGame} action={this.setGame} rooms={this.state.rooms}/>
+    // }
 
     if(this.state.gameOver) {
       return <GameOver players={this.state.players}/>

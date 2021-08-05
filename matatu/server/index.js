@@ -6,6 +6,8 @@ const app = express();
 const path = require('path');
 const deck = require('./deck');
 
+const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
+
 let rooms = [{id: 'main', players: 0}, {id: 'test', players: 0}];
 
 //app.use(express.static(path.join(__dirname, '../client/build')));
@@ -34,13 +36,35 @@ const io = require('socket.io')(server, {
     }
 });
 
+
 io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
-    socket.emit('connection', rooms);
+    socket.on('joinRoom', ({ name, room }, callback) => {
+        const {error, player} = addPlayer({id: socket.id, name, room});
+
+        if(error) return callback(error);
+
+        socket.join(player.room);
+        socket.emit('playerJoined', {user: 'Matatu', text: `${player.name} welcome to room ${player.room}`});
+        socket.broadcast.to(player.room).emit('playerJoined', {user: 'Matatu', text: `${player.name} has joined room ${player.room}`});
+
+        io.to(player.room).emit('roomData', { room: player.room, players: getPlayersInRoom(player.room) });
+
+        callback();
+    });
 
     socket.on('callPlay', () => {
         socket.emit('playCalled');
     });
+
+    socket.on('disconnect', () => {
+        const user = removePlayer(socket.id);
+
+        if(user) {
+            io.to(user.room).emit('message', { user: 'Matatu', text: `${user.name} has left.` });
+            io.to(user.room).emit('roomData', { room: user.room, users: getPlayersInRoom(user.room)});
+        }
+    })
 })
 
 

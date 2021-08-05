@@ -1,16 +1,15 @@
 import '../styles/App.css';
 import Header from './header';
-import BeginForm from './BeginForm';
-import React from 'react';
+import React, { useState } from 'react';
+import {Link} from 'react-router-dom';
 
-function Begin(props) {
-    function onClick() {
-        props.handleClick()
-    }
+function Begin() {
+    const [name, setName] = useState('');
+    const [room, setRoom] = useState('');
 
     return (
         <div>
-            <Header />
+            <Header text='Matatu!'/>
             <div className='App-body'>
                 <div className='H-stack'>
                     <div style={{color: "white", fontSize: 20}}>
@@ -61,11 +60,23 @@ function Begin(props) {
                             </ul>
                         </ul>
                     </div>
-                    <BeginForm rooms={props.rooms} action={props.action}/>
-                    <input type='button' 
-                    value='Begin Game!'
-                    onClick={onClick} 
-                    className='button' />
+                    <div>
+                        <div>
+                            <input type='text' 
+                            placeholder='Name' 
+                            onChange={(e) => setName(e.target.value)} ></input>
+                        </div>
+                        <div>
+                            <input type='text' 
+                                placeholder='Room' 
+                                onChange={(e) => setRoom(e.target.value)} ></input>
+                        </div>
+                        <div>
+                            <Link onClick={e => (!name || !room) ? e.preventDefault() : null} to={`/app?name=${name}&room=${room}`}>
+                                <button type='submit' className='button'>Join Room or Create New Room</button>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
