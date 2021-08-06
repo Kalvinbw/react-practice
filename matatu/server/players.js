@@ -12,7 +12,7 @@ const addPlayer = ({id, name, room}) => {
 
     players.push(player);
 
-    return {player};
+    return player;
 }
 
 const removePlayer = (id) => {

@@ -26,7 +26,16 @@ class Deck {
     }
 }
 
-function makeDeck() {
+const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    //this.setState({cards: array});
+    return array;
+}
+
+const makeDeck = () => {
     let suits = ['Heart', 'Spade', 'Club', 'Diamond'];
     let names = ['Ace', 'Jack', 'Queen', 'King', 'Joker'];
     let ability = ['Draw 2', 'Draw 4', 'Draw 5', 'Skip Turn', 'Wild'];
@@ -94,11 +103,8 @@ function makeDeck() {
         let c = new Card(i, 'Joker', names[4], 0, ability[2], values[2]);
         cardAr.push(c);
     }
-    let deck = new Deck(cardAr);
-    return [deck, cardAr];
+    let shuff = shuffleArray(cardAr)
+    return shuff;
 }
 
-let d = makeDeck();
-d = d[1];
-
-module.exports = d;
+module.exports = {makeDeck};

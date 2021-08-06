@@ -4,11 +4,10 @@ const cors = require('cors');
 const express = require('express');
 const app = express();
 const path = require('path');
-const deck = require('./deck');
 
+const {makeDeck} = require('./deck');
 const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
-
-let rooms = [{id: 'main', players: 0}, {id: 'test', players: 0}];
+const {addRoom} = require('./rooms');
 
 //app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -20,7 +19,8 @@ app.get('/', function(req,res) {
 });
 
 app.get("/getCards", async (req, res) => {
-    res.status(200).json(deck);
+    let d = makeDeck();
+    res.status(200).json(d);
 });
 
 //listen on the port //the function part is a callback function
@@ -40,15 +40,18 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
     socket.on('joinRoom', ({ name, room }, callback) => {
-        const {error, player} = addPlayer({id: socket.id, name, room});
+        let Player = addPlayer({id: socket.id, name, room});
+        if(Player instanceof Error) return callback(error);
+        
+        let d = makeDeck()
+        let Room = addRoom(Player, room, d);
 
-        if(error) return callback(error);
+        socket.join(Room.name);
+        // socket.emit('playerJoined', {user: 'Matatu', text: `${Player.name} welcome to room ${Player.room}`});
+        // socket.broadcast.to(Room.name).emit('playerJoined', {user: 'Matatu', text: `${Player.name} has joined room ${Player.room}`});
 
-        socket.join(player.room);
-        socket.emit('playerJoined', {user: 'Matatu', text: `${player.name} welcome to room ${player.room}`});
-        socket.broadcast.to(player.room).emit('playerJoined', {user: 'Matatu', text: `${player.name} has joined room ${player.room}`});
-
-        io.to(player.room).emit('roomData', { room: player.room, players: getPlayersInRoom(player.room) });
+        socket.emit('playerData', Player);
+        io.to(Room.name).emit('roomData', Room);
 
         callback();
     });
