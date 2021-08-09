@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
         let Player = addPlayer({id: socket.id, name, room});
         if(Player === "Username is taken.") return callback(Player);
         
-        let d = makeDeck()
+        let d = makeDeck();
         let Room = addRoom(Player, room, d);
 
         socket.join(Room.name);

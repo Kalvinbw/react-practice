@@ -98,7 +98,7 @@ const NewApp = ({ location }) => {
                 </div>
                 <Hand player={player} 
                 socket={socket}
-                topCard={game.playPile.splice((game.playPile.length - 1), 1)}/>
+                topCard={game.playPile[game.playPile.length - 1]}/>
             </div>
         </div>
         
