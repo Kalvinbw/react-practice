@@ -8,6 +8,7 @@ const Hand = (props) => {
     //update playable cards on turn
     useEffect(() => {
         let hand = props.player.cards;
+        console.log(props.player);
         console.log(props.topCard);
         let tc = props.topCard;
         if(props.player.turn) {
@@ -18,8 +19,9 @@ const Hand = (props) => {
                 c.canPlay = false;
                 c.selected = false;
             });
+            setHand(hand);
         }
-    }, [props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
+    }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
 
     const handleSelect = (card) => {
         //Sanity Check

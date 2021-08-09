@@ -6,7 +6,7 @@ const addPlayer = ({id, name, room}) => {
 
     let existingPlayer = players.find((player) => player.room === room && player.name === name);
     if(!name || !room) return {error: "Username and room are required."};
-    if(existingPlayer) return {error: "Username is taken."}
+    if(existingPlayer) return "Username is taken.";
 
     let player = {id, name, room};
 

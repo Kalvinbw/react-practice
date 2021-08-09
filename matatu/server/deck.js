@@ -104,7 +104,7 @@ const makeDeck = () => {
         cardAr.push(c);
     }
     let shuff = shuffleArray(cardAr)
-    return shuff;
+    return cardAr;
 }
 
 module.exports = {makeDeck};

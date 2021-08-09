@@ -12,7 +12,7 @@ let socket;
 
 const NewApp = ({ location }) => {
     const [player, setPlayer] = useState('');
-    const [game, setGame] = useState('');
+    const [game, setGame] = useState({});
     
     let ENDPOINT = '/'
 
@@ -28,25 +28,27 @@ const NewApp = ({ location }) => {
             if(error) {
                 alert(error);
             }
-        });
-
-        
+        });      
 
     }, [ENDPOINT, location.search]);
 
     //handle update data calls
     useEffect(() => {
-        socket.on('playerData', (player) => {
-            console.log(player);
-            setPlayer(player);
-        });
-
         socket.on('roomData', (room) => {
+            console.log('client on roomData');
             console.log(room);
             setGame(room);
         });
+    }, [game]);
 
-    }, []);
+    //handle player data
+    useEffect(() => {
+        socket.on('playerData', (player) => {
+            console.log('client on playerData');
+            console.log(player);
+            setPlayer(player);
+        });
+    }, [player])
 
     if(!game.players) {
         return (
@@ -58,6 +60,8 @@ const NewApp = ({ location }) => {
             </div>
         )
     }
+    console.log('game');
+    console.log(game);
     return (
         <div>
             <Header text={`Welcome to ${game.name}, ${player.name}`}/>
@@ -76,7 +80,7 @@ const NewApp = ({ location }) => {
                 <div className='H-stack'>
                     <div className='Deck' id='drawPile'>             
                     {game.deck.map((card) => (
-                        <Card key={card.id} show={false} card={card}
+                        <Card key={card.id} show={true} card={card}
                         className='Card'/>
                     ))}
                     </div>

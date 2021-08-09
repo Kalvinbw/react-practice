@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     console.log(`New client connected: ${socket.id}`);
     socket.on('joinRoom', ({ name, room }, callback) => {
         let Player = addPlayer({id: socket.id, name, room});
-        if(Player instanceof Error) return callback(error);
+        if(Player === "Username is taken.") return callback(Player);
         
         let d = makeDeck()
         let Room = addRoom(Player, room, d);
@@ -50,8 +50,10 @@ io.on('connection', (socket) => {
         // socket.emit('playerJoined', {user: 'Matatu', text: `${Player.name} welcome to room ${Player.room}`});
         // socket.broadcast.to(Room.name).emit('playerJoined', {user: 'Matatu', text: `${Player.name} has joined room ${Player.room}`});
 
-        socket.emit('playerData', Player);
-        io.to(Room.name).emit('roomData', Room);
+        io.to(socket.id).emit('playerData', Player);
+        console.log('room data right before emit roomData (server)');
+        console.log(Room.playPile);
+        io.in(Room.name).emit('roomData', Room);
 
         callback();
     });
