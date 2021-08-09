@@ -91,6 +91,10 @@ const NewApp = ({ location }) => {
                         className='Card'/>
                     ))}
                     </div>
+
+                    <p className={player.turn ? 'App-link' : null}>
+                        {player.turn ? 'Your Turn' : "Opponent's Turn"}
+                    </p>
                 </div>
                 <Hand player={player} 
                 socket={socket}
