@@ -35,8 +35,8 @@ const NewApp = ({ location }) => {
     //handle update data calls
     useEffect(() => {
         socket.on('roomData', (room) => {
-            console.log('client on roomData');
-            console.log(room);
+            // console.log('client on roomData');
+            // console.log(room);
             setGame(room);
         });
     }, [game]);
@@ -44,11 +44,15 @@ const NewApp = ({ location }) => {
     //handle player data
     useEffect(() => {
         socket.on('playerData', (player) => {
-            console.log('client on playerData');
-            console.log(player);
+            // console.log('client on playerData');
+            // console.log(player);
             setPlayer(player);
         });
-    }, [player])
+    }, [player]);
+
+    const callPlay = () => {
+        socket.emit('callPlay', player);
+    }
 
     if(!game.players) {
         return (
@@ -60,8 +64,6 @@ const NewApp = ({ location }) => {
             </div>
         )
     }
-    console.log('game');
-    console.log(game);
     return (
         <div>
             <Header text={`Welcome to ${game.name}, ${player.name}`}/>
@@ -93,8 +95,10 @@ const NewApp = ({ location }) => {
                     </div>
 
                     <p className={player.turn ? 'App-link' : null}>
-                        {player.turn ? 'Your Turn' : "Opponent's Turn"}
+                        {player.turn ? `Your Turn` : `Opponent's Turn`}
                     </p>
+
+                    <input type='button' onClick={player.turn ? callPlay : null} value='Play Selected Card(s)'/>
                 </div>
                 <Hand player={player} 
                 socket={socket}

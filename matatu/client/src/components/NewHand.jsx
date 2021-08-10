@@ -8,8 +8,9 @@ const Hand = (props) => {
     //update playable cards on turn
     useEffect(() => {
         let hand = props.player.cards;
-        console.log(props.player);
-        console.log(props.topCard);
+        console.log('use effect called');
+        // console.log(props.player);
+        // console.log(props.topCard);
         let tc = props.topCard;
         if(props.player.turn) {
             let h = checkCanPlay(hand, tc);
@@ -23,6 +24,15 @@ const Hand = (props) => {
         }
     }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
 
+    useEffect(() => {
+        console.log('play call effect');
+        props.socket.on('playCalled', () => {
+            console.log('play called!!!!');
+            let selectedCards = hand.filter(c => c.selected);
+            props.socket.emit('playData', (props.player, selectedCards));
+        });
+    }, [hand, props.player, props.socket]);
+
     const handleSelect = (card) => {
         //Sanity Check
         if(!card.canPlay) {
@@ -31,31 +41,48 @@ const Hand = (props) => {
         }
 
         let handCopy = [...hand];
+        let match = false
         for(let i = 0; i < handCopy.length; i++) {
             //if they chose a selected card, unselect it
             if(card.id === handCopy[i].id && handCopy[i].selected) {
                 handCopy[i].selected = !handCopy[i].selected;
-                setHand(handCopy);
+                let hc;
+                let selectedCard = -1;
+                for(let j=0;j<handCopy.length;j++) {
+                    if(handCopy[j].selected) {
+                        selectedCard = j;
+                        break;
+                    }
+                }
+                if(selectedCard > -1) {
+                    hc = checkNumberMatch(handCopy, handCopy[selectedCard].number);
+                    setHand(hc);
+                } else {
+                    hc = checkCanPlay(handCopy, props.topCard);
+                    setHand(hc);
+                }
+                match = true;
+                break;
             } 
             //if they chose a playable card
             else if(card.id === handCopy[i].id && handCopy[i].canPlay) {
                 //select the card
                 handCopy[i].selected = !handCopy[i].selected;
-                let hc = checkCanPlay(handCopy, handCopy[i]);
+                let hc = checkNumberMatch(handCopy, card.number);
                 setHand(hc);
+                match = true;
+                break;
             } 
-            //they did not chose a playable card
-            else {
-                alert(`Sorry, you can't play that card`);
-            }
-            
+        }
+        if(!match) {
+            alert("Sorry you can't play that card!");
         }
     }
 
     const checkCanPlay = (array, checkCard) => {
-        console.log('check card');
-        console.log(array);
-        console.log(checkCard);
+        // console.log('check card');
+        // console.log(array);
+        // console.log(checkCard);
         //if joker is on top, any card is playable
         let ar = [...array];
         if(checkCard.number === 0) {
@@ -76,6 +103,14 @@ const Hand = (props) => {
                 }
         }
 
+        return ar;
+    }
+
+    const checkNumberMatch = (array, number) => {
+        let ar = [...array];
+        ar.forEach(card => {
+            card.number === number ? card.canPlay = true : card.canPlay = false;
+        });
         return ar;
     }
 

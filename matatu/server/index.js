@@ -7,7 +7,7 @@ const path = require('path');
 
 const {makeDeck} = require('./deck');
 const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
-const {addRoom} = require('./rooms');
+const {addRoom, doPlay} = require('./rooms');
 
 //app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -38,7 +38,7 @@ const io = require('socket.io')(server, {
 
 
 io.on('connection', (socket) => {
-    console.log(`New client connected: ${socket.id}`);
+    //console.log(`New client connected: ${socket.id}`);
     socket.on('joinRoom', ({ name, room }, callback) => {
         let Player = addPlayer({id: socket.id, name, room});
         if(Player === "Username is taken.") return callback(Player);
@@ -51,15 +51,22 @@ io.on('connection', (socket) => {
         // socket.broadcast.to(Room.name).emit('playerJoined', {user: 'Matatu', text: `${Player.name} has joined room ${Player.room}`});
 
         io.to(socket.id).emit('playerData', Player);
-        console.log('room data right before emit roomData (server)');
-        console.log(Room.playPile);
+        // console.log('room data right before emit roomData (server)');
+        // console.log(Room.playPile);
         io.in(Room.name).emit('roomData', Room);
 
         callback();
     });
 
-    socket.on('callPlay', () => {
-        socket.emit('playCalled');
+    socket.on('callPlay', (player) => {
+        console.log('play called from: ' + player.name);
+        io.to(player.id).emit('playCalled');
+    });
+
+    socket.on('playData', (player, selectedCards) => {
+        let [p, g] = doPlay(player, selectedCards);
+        io.to(player.id).emit('playerData', p);
+        io.in(g.room).emit('roomData', g);
     });
 
     socket.on('disconnect', () => {

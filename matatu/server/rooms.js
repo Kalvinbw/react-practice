@@ -5,7 +5,7 @@ let games = [];
 const addRoom = (player, roomName, deck) => {
     let d = [...deck];
     let index = games.findIndex((room) => room.name === roomName);
-    console.log(index);
+    //console.log(index);
     
     if(games.length !== 0 && index !== -1) {
         if(games[index].players.length >= 8) {
@@ -25,13 +25,34 @@ const addRoom = (player, roomName, deck) => {
         playDeck = d.splice(0,1);
         player.cards = d.splice(0,4);
         player.turn = true;
-        console.log(playDeck);
+        //console.log(playDeck);
         let room = {name: roomName, players: [player], deck: d, playPile: playDeck};
         games.push(room);
-        console.log(room.playPile);
+        //console.log(room.playPile);
         return room;
 
     }
 }
 
-module.exports = {addRoom};
+const doPlay = (player, selectedCards) => {
+    let g = games.filter(g => g.name === player.room);
+    console.log(player);
+    let playerIndex = g.players.findIndex(p => p.name === player.name);
+    for(let i = 0; i < selectedCards.length; i++) {
+        for(let j = 0; j < player.hand; j++) {
+            player.hand[j].canPlay = false;
+            player.hand[j].selected = false;
+            if(selectedCards[i].id === player.hand[j].id) {
+                let c = player.hand.splice(j,1)
+                g.playPile.push(c[0]);
+            }
+        }
+    }
+    player.turn = !player.turn;
+    g.players[playerIndex] = player;
+    g.players[playerIndex + 1].turn = true;
+
+    return [g.players[playerIndex], g];
+}
+
+module.exports = {addRoom, doPlay};
