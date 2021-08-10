@@ -50,6 +50,10 @@ const NewApp = ({ location }) => {
         socket.emit('callPlay', player);
     }
 
+    const sendPlayData = (cards) => {
+        socket.emit('playData', player, cards);
+    }
+
     const drawCard = (c) => {
         socket.emit('drawCard', player);
     }
@@ -102,7 +106,8 @@ const NewApp = ({ location }) => {
                 </div>
                 <Hand player={player} 
                 socket={socket}
-                topCard={game.playPile[game.playPile.length - 1]}/>
+                topCard={game.playPile[game.playPile.length - 1]}
+                handlePlay={sendPlayData}/>
             </div>
         </div>
         

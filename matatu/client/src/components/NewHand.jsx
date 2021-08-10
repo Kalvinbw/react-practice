@@ -24,13 +24,16 @@ const Hand = (props) => {
 
         props.socket.on('playCalled', () => {
             console.log('play called!!!!');
-            props.socket.emit('playData', props.player, hand);
-            let h = hand.filter(c => !c.selected)
-            setHand([h]);
+            props.handlePlay(hand);
         });
 
         console.log(hand);
+        return () => {
+            setHand([]);
+        }
+
     }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
+
 
     const handleSelect = (card) => {
         //Sanity Check
