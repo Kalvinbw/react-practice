@@ -35,8 +35,6 @@ const NewApp = ({ location }) => {
     //handle update data calls
     useEffect(() => {
         socket.on('roomData', (room) => {
-            // console.log('client on roomData');
-            // console.log(room);
             setGame(room);
         });
     }, [game]);
@@ -44,14 +42,16 @@ const NewApp = ({ location }) => {
     //handle player data
     useEffect(() => {
         socket.on('playerData', (player) => {
-            // console.log('client on playerData');
-            // console.log(player);
             setPlayer(player);
         });
     }, [player]);
 
     const callPlay = () => {
         socket.emit('callPlay', player);
+    }
+
+    const drawCard = (c) => {
+        socket.emit('drawCard', player);
     }
 
     if(!game.players) {
@@ -83,14 +83,14 @@ const NewApp = ({ location }) => {
                     <div className='Deck' id='drawPile'>             
                     {game.deck.map((card) => (
                         <Card key={card.id} show={true} card={card}
-                        className='Card'/>
+                        className='Card' handleChange={drawCard}/>
                     ))}
                     </div>
 
                     <div className='Deck' id='drawPile'>             
                     {game.playPile.map((card) => (
                         <Card key={card.id} show={true} card={card}
-                        className='Card'/>
+                        className='Card' handleChange={drawCard}/>
                     ))}
                     </div>
 

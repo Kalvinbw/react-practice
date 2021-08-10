@@ -7,7 +7,7 @@ const path = require('path');
 
 const {makeDeck} = require('./deck');
 const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
-const {addRoom, doPlay} = require('./rooms');
+const {addRoom, doPlay, drawCard} = require('./rooms');
 
 //app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -47,15 +47,19 @@ io.on('connection', (socket) => {
         let Room = addRoom(Player, room, d);
 
         socket.join(Room.name);
-        // socket.emit('playerJoined', {user: 'Matatu', text: `${Player.name} welcome to room ${Player.room}`});
-        // socket.broadcast.to(Room.name).emit('playerJoined', {user: 'Matatu', text: `${Player.name} has joined room ${Player.room}`});
 
         io.to(socket.id).emit('playerData', Player);
-        // console.log('room data right before emit roomData (server)');
-        // console.log(Room.playPile);
         io.in(Room.name).emit('roomData', Room);
 
         callback();
+    });
+
+    socket.on('drawCard', (p) => {
+       console.log('drawing card');
+       let [updatedPlayer, updatedGame] = drawCard(p);
+        io.to(p.id).emit('playerData', updatedPlayer);
+        io.in(updatedGame.name).emit('roomData', updatedGame);
+
     });
 
     socket.on('callPlay', (player) => {
@@ -63,10 +67,15 @@ io.on('connection', (socket) => {
         io.to(player.id).emit('playCalled');
     });
 
-    socket.on('playData', (player, selectedCards) => {
-        let [p, g] = doPlay(player, selectedCards);
-        io.to(player.id).emit('playerData', p);
-        io.in(g.room).emit('roomData', g);
+    socket.on('playData', (p, hand) => {
+        console.log('playdata in server');
+        // console.log(hand);
+        let updatedGame = doPlay(p, hand);
+        for(let i = 0; i < updatedGame.players.length; i++) {
+            io.to(updatedGame.players[i].id).emit('playerData', updatedGame.players[i]);
+        }
+        io.to(p.id).emit('playerData', updatedGame.players[p.index]);
+        io.in(updatedGame.name).emit('roomData', updatedGame);
     });
 
     socket.on('disconnect', () => {

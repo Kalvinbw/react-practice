@@ -9,29 +9,28 @@ const Hand = (props) => {
     useEffect(() => {
         let hand = props.player.cards;
         console.log('use effect called');
-        // console.log(props.player);
-        // console.log(props.topCard);
         let tc = props.topCard;
         if(props.player.turn) {
             let h = checkCanPlay(hand, tc);
             setHand(h);
         } else {
-            hand.forEach(c => {
+            let h = hand.map(c => {
                 c.canPlay = false;
                 c.selected = false;
+                return c;
             });
-            setHand(hand);
+            setHand(h);
         }
-    }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
 
-    useEffect(() => {
-        console.log('play call effect');
         props.socket.on('playCalled', () => {
             console.log('play called!!!!');
-            let selectedCards = hand.filter(c => c.selected);
-            props.socket.emit('playData', (props.player, selectedCards));
+            props.socket.emit('playData', props.player, hand);
+            let h = hand.filter(c => !c.selected)
+            setHand([h]);
         });
-    }, [hand, props.player, props.socket]);
+
+        console.log(hand);
+    }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
 
     const handleSelect = (card) => {
         //Sanity Check
@@ -95,12 +94,12 @@ const Hand = (props) => {
         //check which cards are playable
         for(let i = 0; i < ar.length; i++) {
             if(ar[i].suit === checkCard.suit ||
-                ar[i].number === checkCard.number || 
+                ar[i].number === checkCard.number ||
                 ar[i].number === 8 || ar[i].number === 0) {
                     ar[i].canPlay = true;
-                } else {
-                    ar[i].canPlay = false;
-                }
+            } else {
+                ar[i].canPlay = false;
+            }
         }
 
         return ar;
