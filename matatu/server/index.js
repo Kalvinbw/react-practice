@@ -13,15 +13,17 @@ const {addRoom, doPlay, drawCard} = require('./rooms');
 
 app.use(cors());
 
+app.use(express.static(path.join(__dirname, '../client/build')));
+
 //get the page when they go to the root directory
 app.get('/', function(req,res) {
     res.sendFile(path.resolve(__dirname + '../client/build', 'index.html'));
 });
 
-app.get("/getCards", async (req, res) => {
-    let d = makeDeck();
-    res.status(200).json(d);
-});
+// app.get("/getCards", async (req, res) => {
+//     let d = makeDeck();
+//     res.status(200).json(d);
+// });
 
 //listen on the port //the function part is a callback function
 let server = app.listen(listenPort, function() {
