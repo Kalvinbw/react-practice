@@ -8,7 +8,7 @@ const Hand = (props) => {
     //update playable cards on turn
     useEffect(() => {
         let hand = props.player.cards;
-        console.log('use effect called');
+        //console.log('use effect called');
         let tc = props.topCard;
         if(props.player.turn) {
             let h = checkCanPlay(hand, tc);
@@ -22,18 +22,17 @@ const Hand = (props) => {
             setHand(h);
         }
 
+    }, [props, props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
+
+    useEffect(() => {
         props.socket.on('playCalled', () => {
-            console.log('play called!!!!');
             props.handlePlay(hand);
         });
 
-        console.log(hand);
         return () => {
-            setHand([]);
+            props.socket.off('playCalled');
         }
-
-    }, [props.player, props.player.cards, props.player.turn, props.topCard, props.topCard.number, props.topCard.suit]);
-
+    });
 
     const handleSelect = (card) => {
         //Sanity Check

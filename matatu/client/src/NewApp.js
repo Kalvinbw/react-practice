@@ -14,7 +14,7 @@ const NewApp = ({ location }) => {
     const [player, setPlayer] = useState('');
     const [game, setGame] = useState({});
     
-    let ENDPOINT = '/'
+    let ENDPOINT = '/';
 
     //handle joining the game room
     useEffect(() => {
@@ -35,8 +35,13 @@ const NewApp = ({ location }) => {
     //handle update data calls
     useEffect(() => {
         socket.on('roomData', (room) => {
+            console.log('new room data received');
             setGame(room);
         });
+
+        return () => {
+            socket.off('roomData');
+        }
     }, [game]);
 
     //handle player data
@@ -44,20 +49,28 @@ const NewApp = ({ location }) => {
         socket.on('playerData', (player) => {
             setPlayer(player);
         });
+
+        return () => {
+            socket.off('playerData');
+        }
     }, [player]);
 
+    //Send a request to call a play
     const callPlay = () => {
         socket.emit('callPlay', player);
     }
 
+    //send the data to socket
     const sendPlayData = (cards) => {
         socket.emit('playData', player, cards);
     }
 
+    //send data to draw a card
     const drawCard = (c) => {
         socket.emit('drawCard', player);
     }
 
+    //render this if not loaded yet
     if(!game.players) {
         return (
             <div>

@@ -36,32 +36,88 @@ const addRoom = (player, roomName, deck) => {
 
 const doPlay = (player, hand) => {
     console.log('doPlay');
-    // console.log(hand);
+    //find the game
     let gameindex = games.findIndex((room) => room.name === player.room);
 
+    //filter out the selected cards
     let selectedCards = hand.filter(c => c.selected);
+    let ability = false;
     for(let i = 0; i < selectedCards.length; i++) {
+        ability = selectedCards[i].ability !== false;
         for(let j = 0; j < hand.length; j++) {
             hand[j].canPlay = false;
             hand[j].selected = false;
             if(selectedCards[i].id === hand[j].id) {
-                console.log('match found');
                 let c = hand.splice(j,1);
-                //console.log(c);
+                //push the selected cards to the play pile
                 games[gameindex].playPile.push(c[0]);
             }
         }
     }
+    //give the hand to the player
     player.cards = hand;
-    player.turn = !player.turn;
     games[gameindex].players[player.index] = player;
-    let nextPlayer = (games[gameindex].players.length - 1) === player.index ? 0 : player.index + 1;
-    games[gameindex].players[nextPlayer].turn = true;
+    if(ability) {
+        let g = handleAbility(player, games[gameindex], selectedCards);
+        return g;
+    } else {
+        player.turn = !player.turn;
+        let nextPlayer = (games[gameindex].players.length - 1) === player.index ? 0 : player.index + 1;
+        games[gameindex].players[nextPlayer].turn = true;
+    }
     return games[gameindex];
 }
 
+const handleAbility = (player, game, cards) => {
+    let g = game;
+    switch(cards[0].ability) {
+        case 'Draw 2':
+          g = drawExtra(player, game, 2, cards);
+          break;
+        case 'Draw 4':
+          g = drawExtra(player, game, 4, cards);
+          break;
+        case 'Draw 5':
+          g = drawExtra(player, game, 5, cards);
+          break;
+        case 'Skip Turn':
+          g = skipTurn(cards, players);
+          break;
+        // case 'Wild':
+        //   this.wildCard(cards, players, id);
+        //   break;
+        default:
+          return -1;
+    }
+    return g;
+}
+
+function drawExtra(player, game, drawAmount, cards) {
+    let nextPlayer = (game.players.length - 1) === player.index ? 0 : player.index + 1;
+    for(let i = 0; i < cards.length; i++) {
+        let extra = game.deck.splice(0, drawAmount);
+        game.players[nextPlayer].cards.push(...extra);
+    }
+    game.players[player.index].turn = false;
+    game.players[nextPlayer].turn = true;
+    return game
+}
+
+function skipTurn(player, game, cards) {
+    if(game.players.length <= 2) {
+        return game;
+    }
+    let id = player.index;
+    for(let i = 1; i <= cards.length; i++) {
+        id = (id === (game.players.length - 1)) ? 0 : (id + 1);
+    }
+    game.players[player.index].turn = false;
+    game.players[id].turn = true;
+    return game;
+}
+
 const drawCard = (player) => {
-    console.log('doPlay');
+    console.log('draw card');
     let g;
     for(let i = 0; i < games.length; i++) {
         if(player.room === games[i].name) {
