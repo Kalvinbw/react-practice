@@ -7,6 +7,13 @@ import React, {useState, useEffect} from 'react';
 import queryString from 'query-string';
 import io from 'socket.io-client';
 
+// TODO: End game and calculate winner
+// TODO: Handle deck running out of cards
+// TODO: handle max amount of players in a game (or add more to deck)
+// TODO: handle waiting room and room creator
+// TODO: handle disconnect and reconnect
+// TODO: handle removing room and players when exit
+// TODO: handle player leaving room during game
 
 let socket;
 
