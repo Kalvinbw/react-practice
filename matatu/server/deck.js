@@ -107,4 +107,4 @@ const makeDeck = () => {
     return cardAr;
 }
 
-module.exports = {makeDeck};
+module.exports = {makeDeck, shuffleArray};

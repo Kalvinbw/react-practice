@@ -6,9 +6,12 @@ import Card from './components/Card';
 import React, {useState, useEffect} from 'react';
 import queryString from 'query-string';
 import io from 'socket.io-client';
+import GameOver from "./components/GameOver";
 
 // TODO: End game and calculate winner
-// TODO: Handle deck running out of cards
+// TODO: Handle one card left (going out)
+// TODO: Handle 8 card
+// TODO: Handle adding another draw extra card if you have one in hand
 // TODO: handle max amount of players in a game (or add more to deck)
 // TODO: handle waiting room and room creator
 // TODO: handle disconnect and reconnect
@@ -17,7 +20,7 @@ import io from 'socket.io-client';
 
 let socket;
 
-const NewApp = ({ location }) => {
+const NewApp = ({ location }, props) => {
     const [player, setPlayer] = useState('');
     const [game, setGame] = useState({});
     
@@ -36,6 +39,7 @@ const NewApp = ({ location }) => {
             console.log('emit join room');
             if(error) {
                 alert(error);
+                props.history.push('/');
             }
         });
     }, [ENDPOINT, location.search]);
@@ -89,6 +93,11 @@ const NewApp = ({ location }) => {
             </div>
         )
     }
+
+    if(game.gameOver) {
+        return <GameOver players={game.players}/>;
+    }
+
     return (
         <div>
             <Header text={`Welcome to ${game.name}, ${player.name}`}/>

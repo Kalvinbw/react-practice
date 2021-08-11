@@ -1,5 +1,5 @@
 const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
-
+let {makeDeck, shuffleArray} = require('./deck');
 let games = [];
 
 const addRoom = (player, roomName, deck) => {
@@ -22,7 +22,7 @@ const addRoom = (player, roomName, deck) => {
 
     } else if(index === -1) {
         player.index = 0;
-        playDeck = d.splice(0,1);
+        let playDeck = d.splice(0,1);
         player.cards = d.splice(0,4);
         player.turn = true;
         //console.log(playDeck);
@@ -37,7 +37,7 @@ const addRoom = (player, roomName, deck) => {
 const doPlay = (player, hand) => {
     console.log('doPlay');
     //find the game
-    let gameindex = games.findIndex((room) => room.name === player.room);
+    let gameIndex = games.findIndex((room) => room.name === player.room);
 
     //filter out the selected cards
     let selectedCards = hand.filter(c => c.selected);
@@ -50,22 +50,24 @@ const doPlay = (player, hand) => {
             if(selectedCards[i].id === hand[j].id) {
                 let c = hand.splice(j,1);
                 //push the selected cards to the play pile
-                games[gameindex].playPile.push(c[0]);
+                games[gameIndex].playPile.push(c[0]);
             }
         }
     }
     //give the hand to the player
     player.cards = hand;
-    games[gameindex].players[player.index] = player;
+    games[gameIndex].players[player.index] = player;
     if(ability) {
-        let g = handleAbility(player, games[gameindex], selectedCards);
+        let g = handleAbility(player, games[gameIndex], selectedCards);
+        g = gameOver(g);
         return g;
     } else {
         player.turn = !player.turn;
-        let nextPlayer = (games[gameindex].players.length - 1) === player.index ? 0 : player.index + 1;
-        games[gameindex].players[nextPlayer].turn = true;
+        let nextPlayer = (games[gameIndex].players.length - 1) === player.index ? 0 : player.index + 1;
+        games[gameIndex].players[nextPlayer].turn = true;
     }
-    return games[gameindex];
+    games[gameIndex] = gameOver(games[gameIndex]);
+    return games[gameIndex];
 }
 
 const handleAbility = (player, game, cards) => {
@@ -94,10 +96,15 @@ const handleAbility = (player, game, cards) => {
 
 function drawExtra(player, game, drawAmount, cards) {
     let nextPlayer = (game.players.length - 1) === player.index ? 0 : player.index + 1;
-    for(let i = 0; i < cards.length; i++) {
-        let extra = game.deck.splice(0, drawAmount);
-        game.players[nextPlayer].cards.push(...extra);
+    if(game.deck.length <= (drawAmount * cards.length)) {
+        let shuffleCards = game.playPile.splice(0, game.playPile.length - 2);
+        shuffleCards = shuffleArray(shuffleCards);
+        game.deck.unshift(...shuffleCards);
     }
+
+    let extra = game.deck.splice(0, (drawAmount * cards.length));
+    game.players[nextPlayer].cards.push(...extra);
+
     game.players[player.index].turn = false;
     game.players[nextPlayer].turn = true;
     return game
@@ -107,14 +114,12 @@ function skipTurn(player, game, cards) {
     if(game.players.length <= 2) {
         return game;
     }
+
     let id = player.index;
-    console.log('id of current player');
-    console.log(id);
     for(let i = 1; i <= cards.length; i++) {
         id = (id === (game.players.length - 1)) ? 0 : (id + 1);
     }
-    console.log('id of next player after skip card');
-    console.log(id);
+
     game.players[player.index].turn = false;
     game.players[id].turn = true;
     return game;
@@ -122,16 +127,46 @@ function skipTurn(player, game, cards) {
 
 const drawCard = (player) => {
     console.log('draw card');
-    let gameindex = games.findIndex((room) => room.name === player.room);
-    let c = games[gameindex].deck.splice(games[gameindex].deck.length - 1, 1);
+    let gameIndex = games.findIndex((room) => room.name === player.room);
+
+    if(games[gameIndex].deck.length <= 1) {
+        let shuffleCards = games[gameIndex].playPile.splice(0, games[gameIndex].playPile.length - 2);
+        console.log(shuffleCards);
+        shuffleCards = shuffleArray(shuffleCards);
+        console.log(shuffleCards);
+        games[gameIndex].deck.unshift(...shuffleCards);
+    }
+
+    let c = games[gameIndex].deck.splice(games[gameIndex].deck.length - 1, 1);
     player.cards.push(c[0]);
     player.turn = false;
-    games[gameindex].players[player.index] = player;
-    let nextPlayer = (games[gameindex].players.length - 1) === player.index ? 0 : player.index + 1;
-    games[gameindex].players[nextPlayer].turn = true;
+    games[gameIndex].players[player.index] = player;
+    let nextPlayer = (games[gameIndex].players.length - 1) === player.index ? 0 : player.index + 1;
+    games[gameIndex].players[nextPlayer].turn = true;
+    games[gameIndex] = gameOver(games[gameIndex]);
 
-    return games[gameindex];
+    return games[gameIndex];
 
+}
+
+function gameOver(game) {
+    for(let i = 0; i < game.players.length; i++) {
+        if(game.players[i].cards.length === 0) {
+            game.gameOver = true;
+            break;
+        }
+    }
+    if(!game.gameOver) {
+        return game;
+    }
+    for(let i = 0; i < game.players.length; i++) {
+        let score = 0;
+        for(let j = 0; j < game.players[i].cards.length; j++) {
+            score += game.players[i].cards[j].value;
+        }
+        game.players[i].score = score;
+    }
+    return game;
 }
 
 module.exports = {addRoom, doPlay, drawCard};

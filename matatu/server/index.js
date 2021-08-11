@@ -7,7 +7,7 @@ const path = require('path');
 
 const {makeDeck} = require('./deck');
 const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require('./players');
-const {addRoom, doPlay, drawCard} = require('./rooms');
+const {addRoom, doPlay, drawCard} = require('./game');
 
 //app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -60,9 +60,9 @@ io.on('connection', (socket) => {
        //console.log('drawing card');
        let updatedGame = drawCard(p);
        for(let i = 0; i < updatedGame.players.length; i++) {
-        io.to(updatedGame.players[i].id).emit('playerData', updatedGame.players[i]);
-    }
-        io.in(updatedGame.name).emit('roomData', updatedGame);
+           io.to(updatedGame.players[i].id).emit('playerData', updatedGame.players[i]);
+       }
+       io.in(updatedGame.name).emit('roomData', updatedGame);
     });
 
     socket.on('callPlay', (player) => {

@@ -12,9 +12,11 @@ function GameOver(props) {
                     <p className='App-link'>
                         Thanks for playing!
                     </p>
-                    {props.players.map((player) => (
-                        <p>Player {player.id}: {player.score}</p>
-                    ))}
+                    <ul> Scores
+                        {props.players.map((player) => (
+                            <li>{player.name}: {player.score}</li>
+                        ))}
+                    </ul>
                 </div>
             </div>
         </div>
