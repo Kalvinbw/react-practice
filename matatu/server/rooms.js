@@ -81,7 +81,7 @@ const handleAbility = (player, game, cards) => {
           g = drawExtra(player, game, 5, cards);
           break;
         case 'Skip Turn':
-          g = skipTurn(cards, players);
+          g = skipTurn(player, game, cards);
           break;
         // case 'Wild':
         //   this.wildCard(cards, players, id);
@@ -108,9 +108,13 @@ function skipTurn(player, game, cards) {
         return game;
     }
     let id = player.index;
+    console.log('id of current player');
+    console.log(id);
     for(let i = 1; i <= cards.length; i++) {
         id = (id === (game.players.length - 1)) ? 0 : (id + 1);
     }
+    console.log('id of next player after skip card');
+    console.log(id);
     game.players[player.index].turn = false;
     game.players[id].turn = true;
     return game;
@@ -118,21 +122,15 @@ function skipTurn(player, game, cards) {
 
 const drawCard = (player) => {
     console.log('draw card');
-    let g;
-    for(let i = 0; i < games.length; i++) {
-        if(player.room === games[i].name) {
-            g = games[i];
-        }
-    }
-    let playerIndex = g.players.findIndex(p => p.name === player.name);
-    let c = g.deck.splice(g.deck.length - 1, 1);
+    let gameindex = games.findIndex((room) => room.name === player.room);
+    let c = games[gameindex].deck.splice(games[gameindex].deck.length - 1, 1);
     player.cards.push(c[0]);
-    player.turn = !player.turn;
-    g.players[playerIndex] = player;
-    let nextPlayer = (g.players.length - 1) === playerIndex ? 0 : playerIndex + 1;
-    g.players[nextPlayer].turn = true;
+    player.turn = false;
+    games[gameindex].players[player.index] = player;
+    let nextPlayer = (games[gameindex].players.length - 1) === player.index ? 0 : player.index + 1;
+    games[gameindex].players[nextPlayer].turn = true;
 
-    return [g.players[playerIndex], g];
+    return games[gameindex];
 
 }
 

@@ -55,21 +55,20 @@ io.on('connection', (socket) => {
     });
 
     socket.on('drawCard', (p) => {
-       console.log('drawing card');
-       let [updatedPlayer, updatedGame] = drawCard(p);
-        io.to(p.id).emit('playerData', updatedPlayer);
+       //console.log('drawing card');
+       let updatedGame = drawCard(p);
+       for(let i = 0; i < updatedGame.players.length; i++) {
+        io.to(updatedGame.players[i].id).emit('playerData', updatedGame.players[i]);
+    }
         io.in(updatedGame.name).emit('roomData', updatedGame);
-
     });
 
     socket.on('callPlay', (player) => {
-        console.log('play called from: ' + player.name);
         io.to(player.id).emit('playCalled');
     });
 
     socket.on('playData', (p, hand) => {
         console.log('playdata in server');
-        // console.log(hand);
         let updatedGame = doPlay(p, hand);
         for(let i = 0; i < updatedGame.players.length; i++) {
             io.to(updatedGame.players[i].id).emit('playerData', updatedGame.players[i]);

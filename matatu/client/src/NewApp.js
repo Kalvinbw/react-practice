@@ -66,7 +66,7 @@ const NewApp = ({ location }) => {
     }
 
     //send data to draw a card
-    const drawCard = (c) => {
+    const drawCard = () => {
         socket.emit('drawCard', player);
     }
 
